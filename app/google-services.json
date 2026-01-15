@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "594663727648",
+    "project_id": "app-compra-y-venta-d054f",
+    "storage_bucket": "app-compra-y-venta-d054f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:594663727648:android:db65285fe99fec31189245",
+        "android_client_info": {
+          "package_name": "com.example.appcomprayventa"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCBWhF-xUIHqTgpMyGi0-YLMuTUZjNk9Tg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:594663727648:android:ada4b52a4b227834189245",
+        "android_client_info": {
+          "package_name": "com.example.atlas"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCBWhF-xUIHqTgpMyGi0-YLMuTUZjNk9Tg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
