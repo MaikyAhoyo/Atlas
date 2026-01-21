@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    id("com.google.gms.google-services")
+    alias(libs.plugins.googleService)
 }
 
 android {
@@ -33,6 +33,9 @@ android {
     }
     kotlinOptions {
         jvmTarget = "11"
+    }
+    buildFeatures {
+        viewBinding = true
     }
 }
 

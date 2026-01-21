@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Atlas</string>
+    <string name="Item_Inicio">Inicio</string>
+    <string name="Item_Rutinas">Rutinas</string>
+    <string name="Item_Crear">Crear</string>
+    <string name="Item_Progreso">Progreso</string>
+    <string name="Item_Perfil">Perfil</string>
 </resources>
