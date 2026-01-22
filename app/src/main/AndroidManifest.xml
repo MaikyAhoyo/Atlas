@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Atlas">
         <activity
+            android:name=".OpcionesLogin"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
