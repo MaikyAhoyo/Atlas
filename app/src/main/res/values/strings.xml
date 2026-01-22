@@ -5,4 +5,7 @@
     <string name="Item_Crear">Crear</string>
     <string name="Item_Progreso">Progreso</string>
     <string name="Item_Perfil">Perfil</string>
+    <string name="TituloRL">Titulo</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
