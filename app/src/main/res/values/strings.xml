@@ -5,7 +5,19 @@
     <string name="Item_Crear">Crear</string>
     <string name="Item_Progreso">Progreso</string>
     <string name="Item_Perfil">Perfil</string>
+
     <string name="TituloRL">Titulo</string>
+
+    <string name="Ingresar_email">Ingresar con Email</string>
+    <string name="Ingresar_google">Ingresar con Google</string>
+
+    <string name="Txt_login">Login de usuario</string>
+    <string name="Et_email">Email</string>
+    <string name="Et_password">Contraseña</string>
+    <string name="Btn_ingresar">Ingresar</string>
+    <string name="Txt_no_cuenta">¿No tienes una cuenta?</string>
+    <string name="Txt_registrarme">REGISTRARME</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

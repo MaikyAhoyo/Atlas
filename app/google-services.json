@@ -1,32 +1,13 @@
 {
   "project_info": {
-    "project_number": "594663727648",
-    "project_id": "app-compra-y-venta-d054f",
-    "storage_bucket": "app-compra-y-venta-d054f.firebasestorage.app"
+    "project_number": "102790904151",
+    "project_id": "atlas-2e732",
+    "storage_bucket": "atlas-2e732.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:594663727648:android:db65285fe99fec31189245",
-        "android_client_info": {
-          "package_name": "com.example.appcomprayventa"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCBWhF-xUIHqTgpMyGi0-YLMuTUZjNk9Tg"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:594663727648:android:ada4b52a4b227834189245",
+        "mobilesdk_app_id": "1:102790904151:android:79f8ecb555c5e09952a612",
         "android_client_info": {
           "package_name": "com.example.atlas"
         }
@@ -34,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCBWhF-xUIHqTgpMyGi0-YLMuTUZjNk9Tg"
+          "current_key": "AIzaSyCb0aZ8tiyypban7av85sZzx3pHUgR5RSE"
         }
       ],
       "services": {
