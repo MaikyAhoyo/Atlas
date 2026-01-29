@@ -6,6 +6,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background_color"
     tools:context=".OpcionesLogin">
 
     <androidx.appcompat.widget.LinearLayoutCompat
@@ -13,10 +14,11 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:padding="30dp"
-        android:gravity="center">
+        android:gravity="center"
+        >
 
         <ImageView
-            android:src="@drawable/email_feo"
+            android:src="@drawable/email"
             android:layout_width="100dp"
             android:layout_height="100dp" />
 
@@ -26,7 +28,9 @@
             android:textAllCaps="true"
             android:layout_width="match_parent"
             android:layout_height="@dimen/m_button_height"
-            app:cornerRadius="8dp" />
+            app:cornerRadius="8dp"
+            app:backgroundTint="@color/red"
+            android:textColor="@color/text_button" />
 
         <ImageView
             android:src="@drawable/gmail"
@@ -39,7 +43,9 @@
             android:textAllCaps="true"
             android:layout_width="match_parent"
             android:layout_height="@dimen/m_button_height"
-            app:cornerRadius="8dp" />
+            app:cornerRadius="8dp"
+            app:backgroundTint="@color/red"
+            android:textColor="@color/text_button" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 

@@ -6,6 +6,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background_color"
     tools:context=".MainActivity">
 
     <RelativeLayout
@@ -18,7 +19,10 @@
             android:text="@string/TituloRL"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"/>
+            android:layout_centerInParent="true"
+            android:textColor="@color/text_primary"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
         <View
             android:layout_width="match_parent"
@@ -42,6 +46,7 @@
         android:layout_alignParentBottom="true"
         app:menu="@menu/mi_menu"
         app:labelVisibilityMode="labeled"
+        app:itemTextColor="@color/text_primary"
         />
 
     <View
@@ -60,7 +65,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="40dp"
-        app:backgroundTint="#D32F2F"
-        app:tint="#FAFAFA"
+        app:backgroundTint="@color/red"
+        app:tint="@color/text_button"
         />
 </RelativeLayout>

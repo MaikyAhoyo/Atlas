@@ -14,6 +14,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Atlas">
         <activity
+            android:name=".RegistroEmail"
+            android:exported="false" />
+        <activity
             android:name=".opciones_login.login_email"
             android:exported="false" />
         <activity

@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background_color"
     tools:context=".opciones_login.login_email">
 
     <androidx.appcompat.widget.LinearLayoutCompat
@@ -19,7 +20,8 @@
             android:textStyle="bold"
             android:textSize="20sp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_primary" />
 
         <ImageView
             android:layout_marginTop="15dp"
@@ -41,7 +43,8 @@
                 android:hint="@string/Et_email"
                 android:inputType="textEmailAddress"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_primary" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -59,7 +62,8 @@
                 android:hint="@string/Et_password"
                 android:inputType="textPassword"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_primary" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.button.MaterialButton
@@ -68,7 +72,9 @@
             android:textAllCaps="true"
             android:layout_marginTop="15dp"
             android:layout_width="180dp"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            app:backgroundTint="@color/red"
+            android:textColor="@color/text_button" />
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
@@ -80,7 +86,8 @@
             <TextView
                 android:text="@string/Txt_no_cuenta"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_primary" />
 
             <TextView
                 android:id="@+id/Txt_registrarme"
@@ -88,7 +95,8 @@
                 android:textStyle="bold"
                 android:layout_marginStart="8dp"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_primary" />
         </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.appcompat.widget.LinearLayoutCompat>
 </RelativeLayout>
