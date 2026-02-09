@@ -1,20 +1,40 @@
 package com.example.atlas
 
+import android.app.ProgressDialog
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import com.example.atlas.databinding.ActivityRegistroEmailBinding
+import com.google.firebase.auth.FirebaseAuth
 
 class RegistroEmail : AppCompatActivity() {
+    private lateinit var firebaseAuth: FirebaseAuth
+    private lateinit var progressDialog: ProgressDialog
+
+    private lateinit var binding: ActivityRegistroEmailBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_registro_email)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+        setContentView(binding.root)
+
+        firebaseAuth = FirebaseAuth.getInstance()
+
+        progressDialog = ProgressDialog(this)
+        progressDialog.setTitle("Espere por favor")
+        progressDialog.setCanceledOnTouchOutside(false)
+
+        binding.BtnRegistrar.setOnClickListener {
+            validarInfo()
         }
     }
+
+    private var email = ""
+    private var password = ""
+    private var r_password = ""
+
+    private fun validarInfo() {
+        email = binding.EtEmail.text.toString().trim()
+        password = binding.EtPassword.text.toString().trim()
+        r_password = binding.EtRPassword.text.toString().trim()
+    }
 }
+
+
