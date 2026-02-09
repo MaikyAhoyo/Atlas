@@ -64,7 +64,7 @@
         android:src="@drawable/ic_crear"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="40dp"
+        android:layout_marginBottom="90dp"
         app:backgroundTint="@color/red"
         app:tint="@color/text_button"
         />

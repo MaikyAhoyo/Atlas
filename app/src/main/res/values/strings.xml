@@ -1,10 +1,10 @@
 <resources>
     <string name="app_name">App Compra y Venta</string>
     <string name="Item_Inicio">Inicio</string>
-    <string name="Item_Chats">Chats</string>
-    <string name="Item_vender">Vender</string>
-    <string name="Item_Mis_Anuncios">Mis Anuncios</string>
-    <string name="Item_Cuenta">Cuenta</string>
+    <string name="Item_Rutinas">Rutinas</string>
+    <string name="Item_Crear">Crear</string>
+    <string name="Item_Progreso">Progreso</string>
+    <string name="Item_Perfil">Perfil</string>
 
     <string name="TituloRL">Titulo</string>
 
