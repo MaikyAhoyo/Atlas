@@ -9,15 +9,17 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.atlas.databinding.ActivityRegistroEmailBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
-import kotlin.toString
 
 class RegistroEmail : AppCompatActivity() {
+
+    private lateinit var binding: ActivityRegistroEmailBinding
+
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var progressDialog: ProgressDialog
 
-    private lateinit var binding: ActivityRegistroEmailBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityRegistroEmailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         firebaseAuth = FirebaseAuth.getInstance()
