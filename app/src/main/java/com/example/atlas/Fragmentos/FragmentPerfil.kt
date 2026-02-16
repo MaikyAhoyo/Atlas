@@ -80,9 +80,8 @@ class FragmentPerfil : Fragment() {
     }
 
     private fun cargarDatosDeUsuario() {
-        // DATOS SIMULADOS
-        val nombreUsuario = "Maiky Ahoyo"
-        val numEntrenos = 12
+        val nombreUsuario = firebaseAuth.currentUser?.displayName ?: "Usuario"
+        val numEntrenos = 0
         val numSeguidores = 150
         val numSiguiendo = 45
 
