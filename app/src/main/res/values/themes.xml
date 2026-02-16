@@ -11,4 +11,14 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
     </style>
+
+    <style name="EstiloMenuInferior" parent="Widget.Material3.BottomNavigationView">
+        <item name="materialThemeOverlay">@style/ColoresDeLaPastilla</item>
+    </style>
+
+    <style name="ColoresDeLaPastilla" parent="">
+        <item name="colorSecondaryContainer">@color/red_pastel</item>
+
+        <item name="colorOnSecondaryContainer">@color/red_dark</item>
+    </style>
 </resources>

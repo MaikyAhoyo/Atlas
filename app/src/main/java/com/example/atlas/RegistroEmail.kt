@@ -74,47 +74,15 @@ class RegistroEmail : AppCompatActivity() {
 
         firebaseAuth.createUserWithEmailAndPassword(email, password)
             .addOnSuccessListener {
-                llenarInfoBD()
+                progressDialog.dismiss()
+                val intent = Intent(this, CompletarPerfil::class.java)
+                startActivity(intent)
+                finish()
             }
             .addOnFailureListener { exception ->
                 progressDialog.dismiss()
                 Toast.makeText(this,
                     "No se pudo crear el usuario debido a ${exception.message}",
-                    Toast.LENGTH_SHORT).show()
-            }
-    }
-
-    private fun llenarInfoBD() {
-        progressDialog.setMessage("Guardando información")
-
-        val tiempo = Constantes.obtenerTiempoDis()
-        val emailUsuario = firebaseAuth.currentUser!!.email
-        val uidUsuario = firebaseAuth.uid
-
-        val hashMap = HashMap<String, Any>()
-        hashMap["nombre"] = ""
-        hashMap["codigoTelefono"] = ""
-        hashMap["telefono"] = ""
-        hashMap["urlImagenPerfil"] = ""
-        hashMap["proveedor"] = "Email"
-        hashMap["tiempo"] = tiempo
-        hashMap["email"] = "${emailUsuario}"
-        hashMap["uid"] = "${uidUsuario}"
-        hashMap["fecha_nacimiento"] = ""
-        hashMap["genero"] = ""
-
-        val ref = FirebaseDatabase.getInstance().getReference("Usuarios")
-        ref.child(uidUsuario!!)
-            .setValue(hashMap)
-            .addOnSuccessListener {
-                progressDialog.dismiss()
-                Toast.makeText(this, "Cuenta creada", Toast.LENGTH_SHORT).show()
-                startActivity(Intent(this, MainActivity::class.java))
-                finishAffinity()
-            }
-            .addOnFailureListener { exception ->
-                progressDialog.dismiss()
-                Toast.makeText(this, "No se registró debido a ${exception.message}",
                     Toast.LENGTH_SHORT).show()
             }
     }

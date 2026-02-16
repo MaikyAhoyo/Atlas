@@ -46,8 +46,10 @@
         android:layout_alignParentBottom="true"
         app:menu="@menu/mi_menu"
         app:labelVisibilityMode="labeled"
-        app:itemTextColor="@color/text_primary"
-        />
+
+        style="@style/EstiloMenuInferior"
+
+        app:backgroundTint="@color/background_color" />
 
     <View
         android:id="@+id/View1"
