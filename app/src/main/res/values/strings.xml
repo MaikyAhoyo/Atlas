@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">App Compra y Venta</string>
+    <string name="app_name">Atlas</string>
     <string name="Item_Inicio">Inicio</string>
     <string name="Item_Rutinas">Rutinas</string>
     <string name="Item_Crear">Crear</string>
@@ -21,4 +21,6 @@
     <string name="Txt_registro">Registro de usuario</string>
     <string name="Et_r_password">Repetir contraseña</string>
     <string name="Btn_registrar">Registrar</string>
+
+    <string name="Btn_cerrar_sesion">Cerrar sesión</string>
 </resources>

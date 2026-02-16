@@ -1,5 +1,7 @@
 package com.example.atlas.Fragmentos
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,11 +9,21 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.example.atlas.OpcionesLogin
 import com.example.atlas.R
+import com.example.atlas.databinding.FragmentPerfilBinding
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.imageview.ShapeableImageView
+import com.google.firebase.auth.FirebaseAuth
 
 class FragmentPerfil : Fragment() {
+
+    private lateinit var binding: FragmentPerfilBinding
+
+    private lateinit var firebaseAuth: FirebaseAuth
+
+    private lateinit var mContext: Context
+
     private lateinit var txtUsername: TextView
     private lateinit var txtEntrenos: TextView
     private lateinit var txtSeguidores: TextView
@@ -23,15 +35,28 @@ class FragmentPerfil : Fragment() {
     private lateinit var cardMedidas: MaterialCardView
     private lateinit var cardCalendario: MaterialCardView
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        mContext = context
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_perfil, container, false)
+        binding = FragmentPerfilBinding.inflate(layoutInflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        firebaseAuth = FirebaseAuth.getInstance()
+        binding.BtnCerrarSesion.setOnClickListener {
+            firebaseAuth.signOut()
+            startActivity(Intent(mContext, OpcionesLogin::class.java))
+            activity?.finishAffinity()
+        }
 
         inicializarVistas(view)
 

@@ -15,6 +15,7 @@ class RegistroEmail : AppCompatActivity() {
     private lateinit var binding: ActivityRegistroEmailBinding
 
     private lateinit var firebaseAuth: FirebaseAuth
+
     private lateinit var progressDialog: ProgressDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {

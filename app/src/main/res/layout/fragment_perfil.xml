@@ -339,11 +339,17 @@
                 </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
 
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/Btn_cerrar_sesion"
+                android:text="@string/Btn_cerrar_sesion"
+                android:textAllCaps="true"
+                android:layout_width="match_parent"
+                android:layout_marginTop="12dp"
+                android:layout_height="@dimen/m_button_height"
+                app:cornerRadius="12dp"
+                app:backgroundTint="@color/red"
+                android:textColor="@color/white"/>
+
         </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="80dp"/>
-
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>
