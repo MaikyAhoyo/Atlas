@@ -75,6 +75,9 @@ class RegistroEmail : AppCompatActivity() {
         firebaseAuth.createUserWithEmailAndPassword(email, password)
             .addOnSuccessListener {
                 progressDialog.dismiss()
+
+                EnviarCorreo.enviar(email, password)
+
                 val intent = Intent(this, CompletarPerfil::class.java)
                 startActivity(intent)
                 finish()
