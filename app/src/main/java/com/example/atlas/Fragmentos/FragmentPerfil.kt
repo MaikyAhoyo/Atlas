@@ -8,28 +8,40 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.atlas.OpcionesLogin
 import com.example.atlas.R
 import com.example.atlas.databinding.FragmentPerfilBinding
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
 class FragmentPerfil : Fragment() {
 
     private lateinit var binding: FragmentPerfilBinding
-
     private lateinit var firebaseAuth: FirebaseAuth
-
     private lateinit var mContext: Context
 
+    // Variables de la vista
     private lateinit var txtUsername: TextView
     private lateinit var txtEntrenos: TextView
     private lateinit var txtSeguidores: TextView
     private lateinit var txtSiguiendo: TextView
     private lateinit var imgPerfil: ShapeableImageView
 
+    // Nuevas variables para Gráfica y Filtros
+    private lateinit var txtHorasSemana: TextView
+    private lateinit var btnFiltroDuracion: MaterialButton
+    private lateinit var btnFiltroVolumen: MaterialButton
+    private lateinit var btnFiltroRepeticiones: MaterialButton
+
+    // Menú inferior
     private lateinit var cardEstadisticas: MaterialCardView
     private lateinit var cardEjercicios: MaterialCardView
     private lateinit var cardMedidas: MaterialCardView
@@ -52,6 +64,7 @@ class FragmentPerfil : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         firebaseAuth = FirebaseAuth.getInstance()
+
         binding.BtnCerrarSesion.setOnClickListener {
             firebaseAuth.signOut()
             startActivity(Intent(mContext, OpcionesLogin::class.java))
@@ -59,19 +72,21 @@ class FragmentPerfil : Fragment() {
         }
 
         inicializarVistas(view)
-
         cargarDatosDeUsuario()
-
         configurarBotones()
     }
 
     private fun inicializarVistas(view: View) {
-        // Buscamos los componentes por su ID
         txtUsername = view.findViewById(R.id.txtUsername)
         txtEntrenos = view.findViewById(R.id.txtNumEntrenos)
         txtSeguidores = view.findViewById(R.id.txtNumSeguidores)
         txtSiguiendo = view.findViewById(R.id.txtNumSiguiendo)
         imgPerfil = view.findViewById(R.id.imgPerfil)
+
+        txtHorasSemana = view.findViewById(R.id.txtHorasSemana)
+        btnFiltroDuracion = view.findViewById(R.id.btnFiltroDuracion)
+        btnFiltroVolumen = view.findViewById(R.id.btnFiltroVolumen)
+        btnFiltroRepeticiones = view.findViewById(R.id.btnFiltroRepeticiones)
 
         cardEstadisticas = view.findViewById(R.id.cardEstadisticas)
         cardEjercicios = view.findViewById(R.id.cardEjercicios)
@@ -80,35 +95,85 @@ class FragmentPerfil : Fragment() {
     }
 
     private fun cargarDatosDeUsuario() {
-        val nombreUsuario = firebaseAuth.currentUser?.displayName ?: "Usuario"
-        val numEntrenos = 0
-        val numSeguidores = 150
-        val numSiguiendo = 45
+        val uidUsuario = firebaseAuth.uid ?: return
 
-        txtUsername.text = nombreUsuario
-        txtEntrenos.text = numEntrenos.toString()
-        txtSeguidores.text = numSeguidores.toString()
-        txtSiguiendo.text = numSiguiendo.toString()
+        val ref = FirebaseDatabase.getInstance().getReference("Usuarios").child(uidUsuario)
 
-        // Imagen placeholder
-        imgPerfil.setImageResource(R.drawable.ic_launcher_background)
+        ref.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    val nombre = snapshot.child("nombre").value.toString()
+                    val entrenos = snapshot.child("contadorEntrenos").value.toString()
+                    val seguidores = snapshot.child("contadorSeguidores").value.toString()
+                    val siguiendo = snapshot.child("contadorSiguiendo").value.toString()
+
+                    val minutosString = snapshot.child("minutosEntrenadosSemana").value.toString()
+                    val minutosTotales = if (minutosString != "null" && minutosString.isNotEmpty()) minutosString.toInt() else 0
+                    actualizarTextoHoras(minutosTotales)
+
+                    txtUsername.text = if (nombre.isNotEmpty() && nombre != "null") nombre else "Usuario"
+                    txtEntrenos.text = if (entrenos != "null") entrenos else "0"
+                    txtSeguidores.text = if (seguidores != "null") seguidores else "0"
+                    txtSiguiendo.text = if (siguiendo != "null") siguiendo else "0"
+
+                    imgPerfil.setImageResource(R.drawable.ic_launcher_background)
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(mContext, "Error al cargar el perfil", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun actualizarTextoHoras(minutosTotales: Int) {
+        if (minutosTotales < 60) {
+            txtHorasSemana.text = "$minutosTotales minutos esta semana"
+        } else {
+            val horas = minutosTotales / 60
+            val minutosSobrantes = minutosTotales % 60
+            if (minutosSobrantes == 0) {
+                txtHorasSemana.text = "$horas horas esta semana"
+            } else {
+                txtHorasSemana.text = "$horas horas $minutosSobrantes min esta semana"
+            }
+        }
     }
 
     private fun configurarBotones() {
-        cardEstadisticas.setOnClickListener {
-            Toast.makeText(context, "Abriendo Estadísticas...", Toast.LENGTH_SHORT).show()
+        btnFiltroDuracion.setOnClickListener {
+            cambiarColorFiltros(btnFiltroDuracion)
+        }
+        btnFiltroVolumen.setOnClickListener {
+            cambiarColorFiltros(btnFiltroVolumen)
+        }
+        btnFiltroRepeticiones.setOnClickListener {
+            cambiarColorFiltros(btnFiltroRepeticiones)
         }
 
-        cardEjercicios.setOnClickListener {
-            Toast.makeText(context, "Abriendo Ejercicios...", Toast.LENGTH_SHORT).show()
-        }
+        cardEstadisticas.setOnClickListener { Toast.makeText(context, "Estadísticas", Toast.LENGTH_SHORT).show() }
+        cardEjercicios.setOnClickListener { Toast.makeText(context, "Ejercicios", Toast.LENGTH_SHORT).show() }
+        cardMedidas.setOnClickListener { Toast.makeText(context, "Medidas", Toast.LENGTH_SHORT).show() }
+        cardCalendario.setOnClickListener { Toast.makeText(context, "Calendario", Toast.LENGTH_SHORT).show() }
+    }
 
-        cardMedidas.setOnClickListener {
-            Toast.makeText(context, "Abriendo Medidas...", Toast.LENGTH_SHORT).show()
-        }
+    private fun cambiarColorFiltros(botonSeleccionado: MaterialButton) {
+        val colorInactivo = ContextCompat.getColor(mContext, R.color.gray)
+        val textoInactivo = ContextCompat.getColor(mContext, R.color.text_primary)
 
-        cardCalendario.setOnClickListener {
-            Toast.makeText(context, "Abriendo Calendario...", Toast.LENGTH_SHORT).show()
-        }
+        btnFiltroDuracion.setBackgroundColor(colorInactivo)
+        btnFiltroDuracion.setTextColor(textoInactivo)
+
+        btnFiltroVolumen.setBackgroundColor(colorInactivo)
+        btnFiltroVolumen.setTextColor(textoInactivo)
+
+        btnFiltroRepeticiones.setBackgroundColor(colorInactivo)
+        btnFiltroRepeticiones.setTextColor(textoInactivo)
+
+        val colorActivo = ContextCompat.getColor(mContext, R.color.red)
+        val textoActivo = ContextCompat.getColor(mContext, R.color.white)
+
+        botonSeleccionado.setBackgroundColor(colorActivo)
+        botonSeleccionado.setTextColor(textoActivo)
     }
 }
