@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">Atlas</string>
+
+    <string name="default_web_client_id">102790904151-nk8kl5clf0d7n7dvl6a2oq902bp66134.apps.googleusercontent.com</string>
+
     <string name="Item_Inicio">Inicio</string>
     <string name="Item_Rutinas">Rutinas</string>
     <string name="Item_Crear">Crear</string>
@@ -22,5 +25,23 @@
     <string name="Et_r_password">Repetir contraseña</string>
     <string name="Btn_registrar">Registrar</string>
 
+    <!-- Perfil -->
+    <string name="Txt_username">Usuario</string>
+    <string name="Btn_editar">Editar</string>
+    <string name="Txt_entrenos">Entrenos</string>
+    <string name="Txt_num_entrenos">0</string>
+    <string name="Txt_seguidores">Seguidores</string>
+    <string name="Txt_num_seguidores">0</string>
+    <string name="Txt_siguiendo">Siguiendo</string>
+    <string name="Txt_num_siguiendo">0</string>
+    <string name="Txt_horas_semana">Esta semana</string>
+    <string name="Txt_grafica">Gráfica</string>
+    <string name="Txt_btn_duracion">Duración</string>
+    <string name="Txt_btn_volumen">Volumen</string>
+    <string name="Txt_btn_repeticiones">Repeticiones</string>
+    <string name="Txt_estadisticas">Estadísticas</string>
+    <string name="Txt_ejercicios">Ejercicios</string>
+    <string name="Txt_medidas">Medidas</string>
+    <string name="Txt_calendario">Calendario</string>
     <string name="Btn_cerrar_sesion">Cerrar sesión</string>
 </resources>

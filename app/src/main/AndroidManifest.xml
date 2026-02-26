@@ -20,7 +20,7 @@
             android:name=".RegistroEmail"
             android:exported="false" />
         <activity
-            android:name=".opciones_login.login_email"
+            android:name=".opciones_login.LoginEmail"
             android:exported="false" />
         <activity
             android:name=".OpcionesLogin"

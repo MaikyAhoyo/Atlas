@@ -1,79 +1,34 @@
 {
   "project_info": {
-    "project_number": "594663727648",
-    "firebase_url": "https://app-compra-y-venta-d054f-default-rtdb.firebaseio.com",
-    "project_id": "app-compra-y-venta-d054f",
-    "storage_bucket": "app-compra-y-venta-d054f.firebasestorage.app"
+    "project_number": "102790904151",
+    "firebase_url": "https://atlas-2e732-default-rtdb.firebaseio.com",
+    "project_id": "atlas-2e732",
+    "storage_bucket": "atlas-2e732.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:594663727648:android:db65285fe99fec31189245",
-        "android_client_info": {
-          "package_name": "com.example.appcomprayventa"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "594663727648-q7uf3m697eagba5adiqaumu9vvplj9dp.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.appcomprayventa",
-            "certificate_hash": "3845e14b413c159125f84d51d3075fb32c161ea9"
-          }
-        },
-        {
-          "client_id": "594663727648-ah65hnbjcs9in8np3i6mn5a7mhp2o7rq.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCBWhF-xUIHqTgpMyGi0-YLMuTUZjNk9Tg"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "594663727648-ah65hnbjcs9in8np3i6mn5a7mhp2o7rq.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:594663727648:android:ada4b52a4b227834189245",
+        "mobilesdk_app_id": "1:102790904151:android:79f8ecb555c5e09952a612",
         "android_client_info": {
           "package_name": "com.example.atlas"
         }
       },
       "oauth_client": [
         {
-          "client_id": "594663727648-snk3l3p0o9n5tog5uchvkv12i941g1dc.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.atlas",
-            "certificate_hash": "3845e14b413c159125f84d51d3075fb32c161ea9"
-          }
-        },
-        {
-          "client_id": "594663727648-ah65hnbjcs9in8np3i6mn5a7mhp2o7rq.apps.googleusercontent.com",
+          "client_id": "102790904151-nk8kl5clf0d7n7dvl6a2oq902bp66134.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCBWhF-xUIHqTgpMyGi0-YLMuTUZjNk9Tg"
+          "current_key": "AIzaSyCb0aZ8tiyypban7av85sZzx3pHUgR5RSE"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "594663727648-ah65hnbjcs9in8np3i6mn5a7mhp2o7rq.apps.googleusercontent.com",
+              "client_id": "102790904151-nk8kl5clf0d7n7dvl6a2oq902bp66134.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
