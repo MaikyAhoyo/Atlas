@@ -38,18 +38,42 @@
                 android:orientation="vertical"
                 android:layout_marginStart="16dp">
 
-                <TextView
-                    android:id="@+id/txtUsername"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="maikyahoyo"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                    android:id="@+id/txtUsername"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/Txt_username"
                     android:textColor="@color/text_primary"
                     android:textSize="20sp"
                     android:textStyle="bold" />
 
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/Btn_editar"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        app:icon="@drawable/ic_editar"
+                        app:iconPadding="0dp"
+                        app:iconGravity="textStart"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:padding="0dp"
+                        app:cornerRadius="12dp"
+                        app:backgroundTint="@color/red"
+                        app:iconTint="@color/white" />
+
+                </LinearLayout>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:baselineAligned="false"
                     android:orientation="horizontal"
                     android:layout_marginTop="8dp">
 
@@ -61,14 +85,14 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Entrenos"
+                            android:text="@string/Txt_entrenos"
                             android:textSize="12sp"
                             android:textColor="@color/text_primary"/>
                         <TextView
                             android:id="@+id/txtNumEntrenos"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="9"
+                            android:text="@string/Txt_num_entrenos"
                             android:textStyle="bold"
                             android:textSize="16sp"
                             android:textColor="@color/text_primary"/>
@@ -82,14 +106,14 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Seguidores"
+                            android:text="@string/Txt_seguidores"
                             android:textSize="12sp"
                             android:textColor="@color/text_primary"/>
                         <TextView
                             android:id="@+id/txtNumSeguidores"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="2"
+                            android:text="@string/Txt_num_seguidores"
                             android:textStyle="bold"
                             android:textSize="16sp"
                             android:textColor="@color/text_primary"/>
@@ -103,14 +127,14 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Siguiendo"
+                            android:text="@string/Txt_siguiendo"
                             android:textSize="12sp"
                             android:textColor="@color/text_primary"/>
                         <TextView
                             android:id="@+id/txtNumSiguiendo"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="2"
+                            android:text="@string/Txt_num_siguiendo"
                             android:textStyle="bold"
                             android:textSize="16sp"
                             android:textColor="@color/text_primary"/>
@@ -123,7 +147,7 @@
             android:id="@+id/txtHorasSemana"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="0 horas esta semana"
+            android:text="@string/Txt_horas_semana"
             android:textColor="@color/text_primary"
             android:textStyle="bold"
             android:textSize="16sp"
@@ -133,7 +157,7 @@
             android:layout_width="match_parent"
             android:layout_height="200dp"
             app:cardCornerRadius="12dp"
-            app:cardBackgroundColor="@color/gray"
+            app:cardBackgroundColor="#80FFFFFF"
             app:strokeWidth="0dp"
             android:layout_marginBottom="16dp">
 
@@ -144,7 +168,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Gráfica de Actividad"
+                    android:text="@string/Txt_grafica"
                     android:textColor="#80FFFFFF"
                     android:layout_centerInParent="true"/>
 
@@ -176,7 +200,7 @@
                 android:id="@+id/btnFiltroDuracion"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
-                android:text="Duración"
+                android:text="@string/Txt_btn_duracion"
                 app:cornerRadius="20dp"
                 android:textSize="12sp"
                 app:backgroundTint="@color/red"
@@ -187,7 +211,7 @@
                 android:id="@+id/btnFiltroVolumen"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
-                android:text="Volumen"
+                android:text="@string/Txt_btn_volumen"
                 app:cornerRadius="20dp"
                 android:textSize="12sp"
                 app:backgroundTint="@color/gray"
@@ -198,7 +222,7 @@
                 android:id="@+id/btnFiltroRepeticiones"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
-                android:text="Repeticiones"
+                android:text="@string/Txt_btn_repeticiones"
                 app:cornerRadius="20dp"
                 android:textSize="12sp"
                 app:backgroundTint="@color/gray"
@@ -239,7 +263,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Estadísticas"
+                            android:text="@string/Txt_estadisticas"
                             android:layout_marginStart="12dp"
                             android:textColor="@color/text_primary"
                             android:textStyle="bold"/>
@@ -269,7 +293,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Ejercicios"
+                            android:text="@string/Txt_ejercicios"
                             android:layout_marginStart="12dp"
                             android:textColor="@color/text_primary"
                             android:textStyle="bold"/>
@@ -305,7 +329,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Medidas"
+                            android:text="@string/Txt_medidas"
                             android:layout_marginStart="12dp"
                             android:textColor="@color/text_primary"
                             android:textStyle="bold"/>
@@ -335,7 +359,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Calendario"
+                            android:text="@string/Txt_calendario"
                             android:layout_marginStart="12dp"
                             android:textColor="@color/text_primary"
                             android:textStyle="bold"/>
