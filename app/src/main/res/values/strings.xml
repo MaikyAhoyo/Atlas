@@ -25,6 +25,16 @@
     <string name="Et_r_password">Repetir contraseña</string>
     <string name="Btn_registrar">Registrar</string>
 
+    <!-- Completar Perfil -->
+    <string name="Txt_completar_perfil">Completar perfil</string>
+    <string name="Txt_nombre">Nombre completo</string>
+    <string name="Txt_telefono">Teléfono (opcional)</string>
+    <string name="Txt_fecta_nac">Fecha de nacimiento</string>
+    <string name="Txt_genero">Género</string>
+    <string name="Txt_peso">Peso (kg)</string>
+    <string name="Txt_altura">Altura (cm)</string>
+    <string name="Btn_guardar_datos">Finalizar Registro</string>
+
     <!-- Perfil -->
     <string name="Txt_username">Usuario</string>
     <string name="Btn_editar">Editar</string>

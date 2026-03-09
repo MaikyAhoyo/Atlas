@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
+    android:background="@color/background_color"
     tools:context=".CompletarPerfil">
 
     <LinearLayout
@@ -16,7 +17,7 @@
         android:gravity="center_horizontal">
 
         <TextView
-            android:text="Completa tu Perfil"
+            android:text="@string/Txt_completar_perfil"
             android:textSize="24sp"
             android:textStyle="bold"
             android:layout_marginBottom="20dp"
@@ -27,7 +28,7 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Nombre completo">
+            android:hint="@string/Txt_nombre">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/Et_nombre"
                 android:inputType="textPersonName"
@@ -39,7 +40,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:hint="Teléfono">
+            android:hint="@string/Txt_telefono">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/Et_telefono"
                 android:inputType="phone"
@@ -51,12 +52,27 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:hint="Fecha de Nacimiento (DD/MM/AAAA)">
+            android:hint="@string/Txt_fecta_nac">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/Et_fecha_nac"
-                android:inputType="date"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:cursorVisible="false"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:hint="@string/Txt_genero">
+            <AutoCompleteTextView
+                android:id="@+id/Et_genero"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <LinearLayout
@@ -69,7 +85,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:hint="Peso (kg)"
+                android:hint="@string/Txt_peso"
                 android:layout_marginEnd="5dp">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/Et_peso"
@@ -82,7 +98,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:hint="Altura (cm)"
+                android:hint="@string/Txt_altura"
                 android:layout_marginStart="5dp">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/Et_altura"
@@ -94,8 +110,9 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/Btn_guardar_datos"
-            android:text="Finalizar Registro"
+            android:text="@string/Btn_guardar_datos"
             android:layout_marginTop="30dp"
+            android:layout_marginBottom="30dp"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             app:backgroundTint="@color/red"

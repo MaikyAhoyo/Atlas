@@ -1,13 +1,17 @@
 package com.example.atlas
 
+import android.app.DatePickerDialog
 import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
+import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import com.example.atlas.databinding.ActivityCompletarPerfilBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
+import java.util.Calendar
 
 class CompletarPerfil : AppCompatActivity() {
 
@@ -26,18 +30,72 @@ class CompletarPerfil : AppCompatActivity() {
         progressDialog.setTitle("Espere por favor")
         progressDialog.setCanceledOnTouchOutside(false)
 
+        configurarBotones()
+        configurarMenuGenero()
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                progressDialog.setMessage("Cancelando registro...")
+                progressDialog.show()
+
+                firebaseAuth.currentUser?.delete()?.addOnCompleteListener {
+                    firebaseAuth.signOut()
+                    progressDialog.dismiss()
+                    Toast.makeText(this@CompletarPerfil, "Registro cancelado", Toast.LENGTH_SHORT).show()
+                    startActivity(Intent(this@CompletarPerfil, OpcionesLogin::class.java))
+                    finishAffinity()
+                }
+            }
+        })
+    }
+
+    private fun configurarBotones() {
         binding.BtnGuardarDatos.setOnClickListener {
             validarDatos()
         }
+
+        binding.EtFechaNac.setOnClickListener {
+            mostrarCalendario()
+        }
+    }
+
+    private fun configurarMenuGenero() {
+        val generos = arrayOf("Masculino", "Femenino", "Otro", "Prefiero no decirlo")
+        val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, generos)
+        binding.EtGenero.setAdapter(adapter)
+    }
+
+    private fun mostrarCalendario() {
+        val calendario = Calendar.getInstance()
+        val año = calendario.get(Calendar.YEAR)
+        val mes = calendario.get(Calendar.MONTH)
+        val dia = calendario.get(Calendar.DAY_OF_MONTH)
+
+        val datePickerDialog = DatePickerDialog(this, { _, year, month, dayOfMonth ->
+            val fechaSeleccionada = "$dayOfMonth/${month + 1}/$year"
+            binding.EtFechaNac.setText(fechaSeleccionada)
+        }, año, mes, dia)
+
+        datePickerDialog.show()
     }
 
     private fun validarDatos() {
         val nombre = binding.EtNombre.text.toString().trim()
         val peso = binding.EtPeso.text.toString().trim()
         val altura = binding.EtAltura.text.toString().trim()
+        val fechaNac = binding.EtFechaNac.text.toString().trim()
+        val genero = binding.EtGenero.text.toString().trim()
 
         if (nombre.isEmpty()) {
             binding.EtNombre.error = "Ingrese su nombre"
+            return
+        }
+        if (fechaNac.isEmpty()) {
+            Toast.makeText(this, "Seleccione su fecha de nacimiento", Toast.LENGTH_SHORT).show()
+            return
+        }
+        if (genero.isEmpty()) {
+            Toast.makeText(this, "Seleccione su género", Toast.LENGTH_SHORT).show()
             return
         }
         if (peso.isEmpty()) {
@@ -48,6 +106,7 @@ class CompletarPerfil : AppCompatActivity() {
             binding.EtAltura.error = "Ingrese su altura"
             return
         }
+
         guardarEnFirebase()
     }
 
@@ -62,7 +121,7 @@ class CompletarPerfil : AppCompatActivity() {
         val nombre = binding.EtNombre.text.toString().trim()
         val telefono = binding.EtTelefono.text.toString().trim()
         val fechaNac = binding.EtFechaNac.text.toString().trim()
-
+        val genero = binding.EtGenero.text.toString().trim()
         val peso = binding.EtPeso.text.toString().toDoubleOrNull() ?: 0.0
         val altura = binding.EtAltura.text.toString().toDoubleOrNull() ?: 0.0
 
@@ -79,14 +138,13 @@ class CompletarPerfil : AppCompatActivity() {
         // --- DATOS FÍSICOS ---
         hashMap["peso"] = peso
         hashMap["altura"] = altura
-        hashMap["genero"] = ""
+        hashMap["genero"] = genero
 
         // --- DATOS INICIALES DE APP FITNESS ---
         hashMap["contadorEntrenos"] = 0
         hashMap["contadorSeguidores"] = 0
         hashMap["contadorSiguiendo"] = 0
         hashMap["minutosEntrenadosSemana"] = 0
-        hashMap["urlImagenPerfil"] = ""
 
         val ref = FirebaseDatabase.getInstance().getReference("Usuarios")
         ref.child(uidUsuario!!)
