@@ -1,4 +1,4 @@
-package com.example.atlas.Fragmentos
+package com.example.atlas.fragmentos
 
 import android.content.Context
 import android.content.Intent
@@ -82,6 +82,7 @@ class FragmentPerfil : Fragment() {
         txtSeguidores = view.findViewById(R.id.txtNumSeguidores)
         txtSiguiendo = view.findViewById(R.id.txtNumSiguiendo)
         imgPerfil = view.findViewById(R.id.imgPerfil)
+        imagenPerfilAleatoria()
 
         txtHorasSemana = view.findViewById(R.id.txtHorasSemana)
         btnFiltroDuracion = view.findViewById(R.id.btnFiltroDuracion)
@@ -93,6 +94,16 @@ class FragmentPerfil : Fragment() {
         cardMedidas = view.findViewById(R.id.cardMedidas)
         cardCalendario = view.findViewById(R.id.cardCalendario)
     }
+
+    private fun imagenPerfilAleatoria() {
+        val imagenes = listOf(
+            R.drawable.img_perfil_1,
+            R.drawable.img_perfil_2,
+            R.drawable.img_perfil_3)
+        val imagenAleatoria = imagenes.random()
+        imgPerfil.setImageResource(imagenAleatoria)
+    }
+
 
     private fun cargarDatosDeUsuario() {
         val uidUsuario = firebaseAuth.uid ?: return
@@ -115,8 +126,6 @@ class FragmentPerfil : Fragment() {
                     txtEntrenos.text = if (entrenos != "null") entrenos else "0"
                     txtSeguidores.text = if (seguidores != "null") seguidores else "0"
                     txtSiguiendo.text = if (siguiendo != "null") siguiendo else "0"
-
-                    imgPerfil.setImageResource(R.drawable.ic_launcher_background)
                 }
             }
 
@@ -128,14 +137,14 @@ class FragmentPerfil : Fragment() {
 
     private fun actualizarTextoHoras(minutosTotales: Int) {
         if (minutosTotales < 60) {
-            txtHorasSemana.text = "$minutosTotales minutos esta semana"
+            txtHorasSemana.text = mContext.getString(R.string.formato_minutos, minutosTotales)
         } else {
             val horas = minutosTotales / 60
             val minutosSobrantes = minutosTotales % 60
             if (minutosSobrantes == 0) {
-                txtHorasSemana.text = "$horas horas esta semana"
+                txtHorasSemana.text = mContext.getString(R.string.formato_horas, horas)
             } else {
-                txtHorasSemana.text = "$horas horas $minutosSobrantes min esta semana"
+                txtHorasSemana.text = mContext.getString(R.string.formato_horas_minutos, horas, minutosSobrantes)
             }
         }
     }
