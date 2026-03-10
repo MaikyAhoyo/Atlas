@@ -3,10 +3,10 @@ package com.example.atlas
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.example.atlas.Fragmentos.FragmentInicio
-import com.example.atlas.Fragmentos.FragmentPerfil
-import com.example.atlas.Fragmentos.FragmentProgreso
-import com.example.atlas.Fragmentos.FragmentRutinas
+import com.example.atlas.fragmentos.FragmentInicio
+import com.example.atlas.fragmentos.FragmentPerfil
+import com.example.atlas.fragmentos.FragmentProgreso
+import com.example.atlas.fragmentos.FragmentRutinas
 import com.example.atlas.databinding.ActivityMainBinding
 import com.google.firebase.auth.FirebaseAuth
 

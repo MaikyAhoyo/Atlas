@@ -44,6 +44,9 @@
     <string name="Txt_num_seguidores">0</string>
     <string name="Txt_siguiendo">Siguiendo</string>
     <string name="Txt_num_siguiendo">0</string>
+    <string name="formato_minutos">%1$d minutos esta semana</string>
+    <string name="formato_horas">%1$d horas esta semana</string>
+    <string name="formato_horas_minutos">%1$d horas %2$d min esta semana</string>
     <string name="Txt_horas_semana">Esta semana</string>
     <string name="Txt_grafica">Gráfica</string>
     <string name="Txt_btn_duracion">Duración</string>

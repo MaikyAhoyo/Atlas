@@ -1,4 +1,4 @@
-package com.example.atlas.Fragmentos
+package com.example.atlas.fragmentos
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

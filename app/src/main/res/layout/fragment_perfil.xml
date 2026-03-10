@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_color"
-    tools:context=".Fragmentos.FragmentPerfil">
+    tools:context=".fragmentos.FragmentPerfil">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -25,7 +25,7 @@
                 android:id="@+id/imgPerfil"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                android:src="@drawable/ic_launcher_background"
+                tools:src="@drawable/img_perfil_1"
                 android:padding="2dp"
                 app:strokeColor="@color/red"
                 app:strokeWidth="2dp"
