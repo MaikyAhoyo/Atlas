@@ -9,6 +9,7 @@ import com.example.atlas.fragmentos.FragmentProgreso
 import com.example.atlas.fragmentos.FragmentRutinas
 import com.example.atlas.databinding.ActivityMainBinding
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.storage.FirebaseStorage
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding

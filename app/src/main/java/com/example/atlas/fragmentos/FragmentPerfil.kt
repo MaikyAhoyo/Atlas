@@ -10,6 +10,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
+import com.example.atlas.EditarPerfil
 import com.example.atlas.OpcionesLogin
 import com.example.atlas.R
 import com.example.atlas.databinding.FragmentPerfilBinding
@@ -65,6 +67,10 @@ class FragmentPerfil : Fragment() {
 
         firebaseAuth = FirebaseAuth.getInstance()
 
+        binding.BtnEditarPerfil.setOnClickListener {
+            startActivity(Intent(mContext, EditarPerfil::class.java))
+        }
+
         binding.BtnCerrarSesion.setOnClickListener {
             firebaseAuth.signOut()
             startActivity(Intent(mContext, OpcionesLogin::class.java))
@@ -82,7 +88,6 @@ class FragmentPerfil : Fragment() {
         txtSeguidores = view.findViewById(R.id.txtNumSeguidores)
         txtSiguiendo = view.findViewById(R.id.txtNumSiguiendo)
         imgPerfil = view.findViewById(R.id.imgPerfil)
-        imagenPerfilAleatoria()
 
         txtHorasSemana = view.findViewById(R.id.txtHorasSemana)
         btnFiltroDuracion = view.findViewById(R.id.btnFiltroDuracion)
@@ -94,16 +99,6 @@ class FragmentPerfil : Fragment() {
         cardMedidas = view.findViewById(R.id.cardMedidas)
         cardCalendario = view.findViewById(R.id.cardCalendario)
     }
-
-    private fun imagenPerfilAleatoria() {
-        val imagenes = listOf(
-            R.drawable.img_perfil_1,
-            R.drawable.img_perfil_2,
-            R.drawable.img_perfil_3)
-        val imagenAleatoria = imagenes.random()
-        imgPerfil.setImageResource(imagenAleatoria)
-    }
-
 
     private fun cargarDatosDeUsuario() {
         val uidUsuario = firebaseAuth.uid ?: return
@@ -118,6 +113,8 @@ class FragmentPerfil : Fragment() {
                     val seguidores = snapshot.child("contadorSeguidores").value.toString()
                     val siguiendo = snapshot.child("contadorSiguiendo").value.toString()
 
+                    val urlImagen = snapshot.child("urlImagenPerfil").value.toString()
+
                     val minutosString = snapshot.child("minutosEntrenadosSemana").value.toString()
                     val minutosTotales = if (minutosString != "null" && minutosString.isNotEmpty()) minutosString.toInt() else 0
                     actualizarTextoHoras(minutosTotales)
@@ -126,6 +123,14 @@ class FragmentPerfil : Fragment() {
                     txtEntrenos.text = if (entrenos != "null") entrenos else "0"
                     txtSeguidores.text = if (seguidores != "null") seguidores else "0"
                     txtSiguiendo.text = if (siguiendo != "null") siguiendo else "0"
+
+                    try {
+                        Glide.with(mContext)
+                            .load(urlImagen)
+                            .placeholder(R.drawable.img_perfil_1)
+                            .into(imgPerfil)
+                    } catch (e: Exception) {
+                    }
                 }
             }
 
