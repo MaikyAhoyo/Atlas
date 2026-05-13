@@ -7,6 +7,7 @@ import android.util.Patterns
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.atlas.MainActivity
+import com.example.atlas.RegistroEmail
 import com.example.atlas.databinding.ActivityLoginEmailBinding
 import com.google.firebase.auth.FirebaseAuth
 
@@ -32,6 +33,10 @@ class LoginEmail : AppCompatActivity() {
 
         binding.BtnIngresar.setOnClickListener {
             validarInfo()
+        }
+
+        binding.TxtRegistrarme.setOnClickListener {
+            startActivity(Intent(this, RegistroEmail::class.java))
         }
     }
 
