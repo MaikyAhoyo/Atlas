@@ -10,9 +10,9 @@
     <item android:id="@+id/Item_Crear"
         android:title="@string/Item_Crear"
         android:enabled="false" />
-    <item android:id="@+id/Item_Progreso"
-        android:title="@string/Item_Progreso"
-        android:icon="@drawable/ic_progreso"/>
+    <item android:id="@+id/Item_Chat"
+        android:title="@string/Item_Chat"
+        android:icon="@drawable/ic_chat"/>
     <item android:id="@+id/Item_Perfil"
         android:title="@string/Item_Perfil"
         android:icon="@drawable/ic_perfil"/>
