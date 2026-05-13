@@ -108,7 +108,7 @@ class FragmentPerfil : Fragment() {
         ref.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
-                    val nombre = snapshot.child("nombre").value.toString()
+                    val nombre = snapshot.child("nombres").value.toString()
                     val entrenos = snapshot.child("contadorEntrenos").value.toString()
                     val seguidores = snapshot.child("contadorSeguidores").value.toString()
                     val siguiendo = snapshot.child("contadorSiguiendo").value.toString()

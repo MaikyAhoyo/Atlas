@@ -130,7 +130,7 @@ class CompletarPerfil : AppCompatActivity() {
         // --- DATOS BÁSICOS ---
         hashMap["uid"] = "$uidUsuario"
         hashMap["email"] = "$emailUsuario"
-        hashMap["nombre"] = nombre
+        hashMap["nombres"] = nombre
         hashMap["telefono"] = telefono
         hashMap["fecha_nacimiento"] = fechaNac
         hashMap["tiempo"] = tiempo

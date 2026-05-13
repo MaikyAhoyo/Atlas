@@ -64,10 +64,22 @@
     <string name="Et_cod_tel">+00</string>
     <string name="Et_telefono">Teléfono</string>
     <string name="Btn_aztualizar">Actualizar</string>
-  
+
     <!-- Ícono del usuario en chats -->
     <string name="item_uid">Uid</string>
     <string name="item_nombre">Nombre</string>
     <string name="item_email">Email</string>
+
+    <!-- Buscra usuario -->
+    <string name="tvSinUsuarios">No hay usuarios disponibles</string>
+    <string name="Et_buscar_usuario">Buscar usuario</string>
+
+    <!-- Mensajes -->
+    <string name="Txt_nombre_usuario">Nombres</string>
+    <string name="Et_mensaje_chat">Escribe un mensaje</string>
+    <string name="Tv_tiempo_mensaje">dd/MM/yyyy hh:mm</string>
+
+    <!-- Visualizador -->
+    <string name="BtnCerrarVisualizador">Cerrar</string>
 
 </resources>
