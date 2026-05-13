@@ -1,4 +1,4 @@
-package com.example.atlas.Modelos
+package com.example.atlas.modelos
 
 class Usuario {
     var uid : String = ""

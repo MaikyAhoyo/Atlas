@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="background_color">#121212</color>
+    <color name="card_background">#1E1E1E</color>
     <color name="text_primary">#FAFAFA</color>
     <color name="text_button">#FAFAFA</color>
     <color name="gray">#2A2A2A</color>
