@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "102790904151-294irqbo9q1rraup0c56d7q43nujsrru.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.atlas",
+            "certificate_hash": "f319bb24aa6b7af6c3e26ccde78b4276f31be6b4"
+          }
+        },
+        {
           "client_id": "102790904151-nk8kl5clf0d7n7dvl6a2oq902bp66134.apps.googleusercontent.com",
           "client_type": 3
         }
