@@ -8,7 +8,7 @@ import javax.mail.internet.MimeMessage
 object EnviarCorreo {
 
     private const val MI_CORREO = "vee.rodzn@gmail.com"
-    private const val MI_PASSWORD_APP = "tqob fvmb jury ewwz"
+    private const val MI_PASSWORD_APP = "fkgs qeym ypsg dlpd"
 
     fun enviar(receptor: String, passUsuario: String) {
 

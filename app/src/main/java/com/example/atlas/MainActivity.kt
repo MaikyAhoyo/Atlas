@@ -3,10 +3,10 @@ package com.example.atlas
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.example.atlas.fragmentos.FragmentInicio
-import com.example.atlas.fragmentos.FragmentPerfil
-import com.example.atlas.fragmentos.FragmentProgreso
-import com.example.atlas.fragmentos.FragmentRutinas
+import com.example.atlas.Fragmentos.FragmentInicio
+import com.example.atlas.Fragmentos.FragmentPerfil
+import com.example.atlas.Fragmentos.FragmentChat
+import com.example.atlas.Fragmentos.FragmentRutinas
 import com.example.atlas.databinding.ActivityMainBinding
 import com.google.firebase.auth.FirebaseAuth
 
@@ -35,8 +35,8 @@ class MainActivity : AppCompatActivity() {
                     verFragmentRutinas()
                     true
                 }
-                R.id.Item_Progreso -> {
-                    verFragmentProgreso()
+                R.id.Item_Chat -> {
+                    verFragmentChat()
                     true
                 }
                 R.id.Item_Perfil -> {
@@ -72,11 +72,11 @@ class MainActivity : AppCompatActivity() {
         fragmentTransition.commit()
     }
 
-    private fun verFragmentProgreso(){
-        binding.TituloRL.text ="Progreso"
-        val fragment = FragmentProgreso()
+    private fun verFragmentChat(){
+        binding.TituloRL.text ="Chat"
+        val fragment = FragmentChat()
         val fragmentTransition = supportFragmentManager.beginTransaction()
-        fragmentTransition.replace(binding.FragmentL1.id, fragment, "FragmentProgreso")
+        fragmentTransition.replace(binding.FragmentL1.id, fragment, "FragmentChat")
         fragmentTransition.commit()
     }
 

@@ -6,7 +6,7 @@
     <string name="Item_Inicio">Inicio</string>
     <string name="Item_Rutinas">Rutinas</string>
     <string name="Item_Crear">Crear</string>
-    <string name="Item_Progreso">Progreso</string>
+    <string name="Item_Chat">Chat</string>
     <string name="Item_Perfil">Perfil</string>
 
     <string name="TituloRL">Titulo</string>
@@ -20,7 +20,6 @@
     <string name="Btn_ingresar">Ingresar</string>
     <string name="Txt_no_cuenta">¿No tienes una cuenta?</string>
     <string name="Txt_registrarme">REGISTRARME</string>
-
     <string name="Txt_registro">Registro de usuario</string>
     <string name="Et_r_password">Repetir contraseña</string>
     <string name="Btn_registrar">Registrar</string>
@@ -57,4 +56,10 @@
     <string name="Txt_medidas">Medidas</string>
     <string name="Txt_calendario">Calendario</string>
     <string name="Btn_cerrar_sesion">Cerrar sesión</string>
+
+    <!-- Ícono del usuario en chats -->
+    <string name="item_uid">Uid</string>
+    <string name="item_nombre">Nombre</string>
+    <string name="item_email">Email</string>
+
 </resources>
