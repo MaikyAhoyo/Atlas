@@ -55,7 +55,7 @@
                     android:textStyle="bold" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/Btn_editar"
+                        android:id="@+id/Btn_editar_perfil"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
                         app:icon="@drawable/ic_editar"

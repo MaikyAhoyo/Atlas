@@ -57,6 +57,14 @@
     <string name="Txt_calendario">Calendario</string>
     <string name="Btn_cerrar_sesion">Cerrar sesión</string>
 
+    <!-- Editar Perfil -->
+    <string name="Txt_editar_perfil">Editar perfil</string>
+    <string name="Et_nombres">Nombres Completos</string>
+    <string name="Et_f_nac">Fecha de nac.</string>
+    <string name="Et_cod_tel">+00</string>
+    <string name="Et_telefono">Teléfono</string>
+    <string name="Btn_aztualizar">Actualizar</string>
+  
     <!-- Ícono del usuario en chats -->
     <string name="item_uid">Uid</string>
     <string name="item_nombre">Nombre</string>
