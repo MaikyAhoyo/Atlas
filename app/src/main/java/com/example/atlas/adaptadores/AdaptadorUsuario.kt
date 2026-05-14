@@ -35,7 +35,7 @@ class AdaptadorUsuario (
         holder.email.text = usuario.email
 
         Glide.with(context)
-            .load(usuario.imagen)
+            .load(usuario.urlImagenPerfil)
             .placeholder(R.drawable.ic_imagen_perfil)
             .into(holder.imagen)
 

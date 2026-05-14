@@ -10,8 +10,10 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import com.bumptech.glide.Glide
 import com.example.atlas.adaptadores.AdaptadorChat
 import com.example.atlas.Constantes
+import com.example.atlas.R
 import com.example.atlas.modelos.Chat
 import com.example.atlas.databinding.ActivityChatBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -96,7 +98,31 @@ class ChatActivity : AppCompatActivity() {
             })
     }
 
-    private fun cargarInfo(){}
+    private fun cargarInfo() {
+        val ref = FirebaseDatabase.getInstance().getReference("Usuarios")
+        ref.child(uid)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val nombres = "${snapshot.child("nombres").value}"
+                    val imagen = "${snapshot.child("urlImagenPerfil").value}"
+
+                    binding.TxtNombreUsuario.text = nombres
+
+                    try {
+                        Glide.with(applicationContext)
+                            .load(imagen)
+                            .placeholder(R.drawable.ic_imagen_perfil)
+                            .into(binding.ToolbarIV)
+                    } catch (e: Exception) {
+                        Log.e("ChatActivity", "${e.message}")
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.e("FirebaseError", "Error: ${error.message}")
+                }
+            })
+    }
 
     private fun imagenGaleria() {
         val intent = Intent(Intent.ACTION_PICK)
