@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
+import android.media.MediaPlayer
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -27,6 +28,8 @@ class AdaptadorChat : RecyclerView.Adapter<AdaptadorChat.HolderChat> {
     private val chatArray : ArrayList<Chat>
     private val firebaseAuth : FirebaseAuth
     private var chatRuta = ""
+    private var mediaPlayer: MediaPlayer? = null
+    private var playingPosition: Int = -1 // Rastrea qué audio se está reproduciendo
 
     companion object {
         private const val MENSAJE_IZQUIERDO = 0
@@ -46,12 +49,12 @@ class AdaptadorChat : RecyclerView.Adapter<AdaptadorChat.HolderChat> {
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HolderChat {
-        if (viewType == MENSAJE_DERECHO) {
+        return if (viewType == MENSAJE_DERECHO) {
             val view = LayoutInflater.from(context).inflate(R.layout.item_chat_derecho, parent, false)
-            return HolderChat(view)
+            HolderChat(view)
         } else {
             val view = LayoutInflater.from(context).inflate(R.layout.item_chat_izquierdo, parent, false)
-            return HolderChat(view)
+            HolderChat(view)
         }
     }
 
@@ -61,133 +64,161 @@ class AdaptadorChat : RecyclerView.Adapter<AdaptadorChat.HolderChat> {
 
     override fun onBindViewHolder(holder: HolderChat, position: Int) {
         val modeloChat = chatArray[position]
-
         val mensaje = modeloChat.mensaje
         val tipoMensaje = modeloChat.tipoMensaje
         val tiempo = modeloChat.tiempo
 
-        val formato_fecha_hora = Constantes.obtenerFechaHora(tiempo)
-        holder.Tv_tiempo_mensaje.text = formato_fecha_hora
+        holder.Tv_tiempo_mensaje.text = Constantes.obtenerFechaHora(tiempo)
 
-        if(tipoMensaje == Constantes.MENSAJE_TIPO_TEXTO) {
-            holder.Tv_mensaje.visibility = View.VISIBLE
-            holder.Iv_mensaje.visibility = View.GONE
+        when (tipoMensaje) {
+            Constantes.MENSAJE_TIPO_TEXTO -> {
+                holder.Tv_mensaje.visibility = View.VISIBLE
+                holder.Iv_mensaje.visibility = View.GONE
+                holder.Tv_mensaje.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
+                holder.Tv_mensaje.text = mensaje
 
-            holder.Tv_mensaje.text = mensaje
-            if (modeloChat.emisorUid.equals(firebaseAuth.uid)) {
-                holder.itemView.setOnClickListener {
-                    val opciones = arrayOf<CharSequence>("Eliminar mensaje", "Cancelar")
-                    val builder : AlertDialog.Builder = AlertDialog.Builder(holder.itemView.context)
-                    builder.setTitle("¿Qué deseas realizar?")
-                    builder.setItems(opciones, DialogInterface.OnClickListener { dialog, which ->
-                        if (which == 0) {
-                            eliminarMensaje(position, holder, modeloChat)
-                        }
-                    })
-                    builder.show()
+                if (modeloChat.emisorUid == firebaseAuth.uid) {
+                    holder.itemView.setOnClickListener {
+                        mostrarDialogoEliminar(position, holder, modeloChat)
+                    }
                 }
             }
-        } else {
-            holder.Tv_mensaje.visibility = View.GONE
-            holder.Iv_mensaje.visibility = View.VISIBLE
+            Constantes.MENSAJE_TIPO_AUDIO -> {
+                holder.Tv_mensaje.visibility = View.VISIBLE
+                holder.Iv_mensaje.visibility = View.GONE
+                holder.Tv_mensaje.text = "Mensaje de voz"
 
-            try {
+                // Cambiar ícono dinámicamente según si este ítem se está reproduciendo
+                val iconRes = if (playingPosition == position) R.drawable.ic_pause else R.drawable.ic_play
+                holder.Tv_mensaje.setCompoundDrawablesWithIntrinsicBounds(iconRes, 0, 0, 0)
+                holder.Tv_mensaje.compoundDrawablePadding = 15
+
+                holder.itemView.setOnClickListener {
+                    if (playingPosition == position) {
+                        pausarAudio()
+                    } else {
+                        reproducirAudio(mensaje, position)
+                    }
+                }
+
+                if (modeloChat.emisorUid == firebaseAuth.uid) {
+                    holder.itemView.setOnLongClickListener {
+                        mostrarDialogoEliminar(position, holder, modeloChat, true)
+                        true
+                    }
+                }
+            }
+            else -> { // Tipo IMAGEN
+                holder.Tv_mensaje.visibility = View.GONE
+                holder.Iv_mensaje.visibility = View.VISIBLE
+                holder.Tv_mensaje.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
+
                 Glide.with(context)
                     .load(mensaje)
                     .placeholder(R.drawable.img_enviada)
                     .error(R.drawable.img_perfil)
                     .into(holder.Iv_mensaje)
-            } catch (e: Exception) {
-                Log.e("FirebaseError", "Error al enviar el mensaje: ${e.message}")
-            }
 
-            if (modeloChat.emisorUid.equals(firebaseAuth.uid)) {
                 holder.itemView.setOnClickListener {
-                    val opciones =
+                    val opciones = if (modeloChat.emisorUid == firebaseAuth.uid) {
                         arrayOf<CharSequence>("Eliminar imagen", "Ver imagen", "Cancelar")
-                    val builder : AlertDialog.Builder = AlertDialog.Builder(holder.itemView.context)
+                    } else {
+                        arrayOf<CharSequence>("Ver imagen", "Cancelar")
+                    }
+
+                    val builder = AlertDialog.Builder(context)
                     builder.setTitle("¿Qué desea realizar?")
-                    builder.setItems(opciones, DialogInterface.OnClickListener { dialog, which ->
-                        if (which == 0) {
-                            eliminarMensaje(position, holder, modeloChat)
-                        } else if (which == 1) {
-                            visualizadorImagen(modeloChat.mensaje)
+                    builder.setItems(opciones) { _, which ->
+                        when {
+                            opciones[which] == "Eliminar imagen" -> eliminarMensaje(position, holder, modeloChat)
+                            opciones[which] == "Ver imagen" -> visualizadorImagen(mensaje)
                         }
-                    })
-                    builder.show()
-                }
-            }
-            else if (!modeloChat.emisorUid.equals(firebaseAuth.uid)) {
-                holder.itemView.setOnClickListener {
-                    val opciones = arrayOf<CharSequence>("Ver imagen", "Cancelar")
-                    val builder : AlertDialog.Builder = AlertDialog.Builder(holder.itemView.context)
-                    builder.setTitle("¿Qué desea realizar?")
-                    builder.setItems(opciones, DialogInterface.OnClickListener { dialog, which ->
-                        if (which == 0) {
-                            visualizadorImagen(modeloChat.mensaje)
-                        }
-                    })
+                    }
                     builder.show()
                 }
             }
         }
     }
 
-    override fun getItemViewType(position: Int): Int {
-        if (chatArray[position].emisorUid == firebaseAuth.uid) {
-            return MENSAJE_DERECHO
-        } else {
-            return MENSAJE_IZQUIERDO
+    private fun reproducirAudio(url: String, position: Int) {
+        try {
+            val oldPosition = playingPosition
+            playingPosition = position
+
+            // Actualizar iconos de los elementos afectados
+            if (oldPosition != -1) notifyItemChanged(oldPosition)
+            notifyItemChanged(playingPosition)
+
+            mediaPlayer?.release()
+            mediaPlayer = MediaPlayer().apply {
+                setDataSource(url)
+                prepareAsync()
+                setOnPreparedListener { start() }
+                setOnCompletionListener {
+                    val finishedPos = playingPosition
+                    playingPosition = -1
+                    notifyItemChanged(finishedPos)
+                }
+                setOnErrorListener { _, _, _ ->
+                    playingPosition = -1
+                    notifyItemChanged(position)
+                    false
+                }
+            }
+        } catch (e: Exception) {
+            playingPosition = -1
+            notifyItemChanged(position)
         }
+    }
+
+    private fun pausarAudio() {
+        try {
+            if (mediaPlayer?.isPlaying == true) {
+                mediaPlayer?.stop()
+                mediaPlayer?.release()
+                mediaPlayer = null
+                val oldPos = playingPosition
+                playingPosition = -1
+                notifyItemChanged(oldPos)
+            }
+        } catch (e: Exception) {
+            Log.e("Audio", "Error al pausar: ${e.message}")
+        }
+    }
+
+    private fun mostrarDialogoEliminar(position: Int, holder: HolderChat, modeloChat: Chat, esAudio: Boolean = false) {
+        val tipo = if (esAudio) "audio" else "mensaje"
+        val opciones = arrayOf<CharSequence>("Eliminar $tipo", "Cancelar")
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle("¿Qué deseas realizar?")
+        builder.setItems(opciones) { _, which ->
+            if (which == 0) eliminarMensaje(position, holder, modeloChat)
+        }
+        builder.show()
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return if (chatArray[position].emisorUid == firebaseAuth.uid) MENSAJE_DERECHO else MENSAJE_IZQUIERDO
     }
 
     private fun eliminarMensaje(position: Int, holder : HolderChat, modeloChat : Chat) {
         chatRuta = Constantes.rutaChat(modeloChat.receptorUid, modeloChat.emisorUid)
-
-        val ref = FirebaseDatabase.getInstance().reference.child("Chats")
-        ref.child(chatRuta).child(chatArray.get(position).idMensaje)
+        FirebaseDatabase.getInstance().reference.child("Chats")
+            .child(chatRuta).child(modeloChat.idMensaje)
             .removeValue()
             .addOnSuccessListener {
-                Toast.makeText(
-                    holder.itemView.context,
-                    "Se ha eliminado el mensaje",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-            .addOnFailureListener { e ->
-                Toast.makeText(
-                    holder.itemView.context,
-                    "No se ha eliminado el mensaje debido a ${e.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(context, "Eliminado correctamente", Toast.LENGTH_SHORT).show()
             }
     }
 
     private fun visualizadorImagen(imagen : String) {
-        val Pv : PhotoView
-        val btnCerrar : MaterialButton
-
         val dialog = Dialog(context)
-
         dialog.setContentView(R.layout.visualizador_img)
+        val pv: PhotoView = dialog.findViewById(R.id.PV_img)
+        val btnCerrar: MaterialButton = dialog.findViewById(R.id.BtnCerrarVisualizador)
 
-        Pv = dialog.findViewById(R.id.PV_img)
-        btnCerrar = dialog.findViewById(R.id.BtnCerrarVisualizador)
-
-        try {
-            Glide.with(context)
-                .load(imagen)
-                .placeholder(R.drawable.img_enviada)
-                .into(Pv)
-        } catch (e : Exception) {
-
-        }
-
-        btnCerrar.setOnClickListener {
-            dialog.dismiss()
-        }
-
+        Glide.with(context).load(imagen).placeholder(R.drawable.img_enviada).into(pv)
+        btnCerrar.setOnClickListener { dialog.dismiss() }
         dialog.show()
-        dialog.setCanceledOnTouchOutside(false)
     }
 }

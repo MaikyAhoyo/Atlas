@@ -8,6 +8,7 @@ import java.util.Locale
 object Constantes {
     const val MENSAJE_TIPO_TEXTO = "TEXTO"
     const val MENSAJE_TIPO_IMAGEN = "IMAGEN"
+    const val MENSAJE_TIPO_AUDIO = "AUDIO"
     fun obtenerTiempoDis() : Long{
         return System.currentTimeMillis()
     }

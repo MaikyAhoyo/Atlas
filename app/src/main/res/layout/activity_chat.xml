@@ -115,10 +115,23 @@
             android:padding="10dp"
             android:inputType="textMultiLine|textCapSentences"
             android:layout_centerVertical="true"
-            android:layout_toStartOf="@+id/adjuntarFAB"
+            android:layout_toStartOf="@+id/audioFAB"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"/>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/audioFAB"
+            android:layout_centerVertical="true"
+            app:fabSize="mini"
+            android:elevation="0dp"
+            android:layout_toStartOf="@+id/adjuntarFAB"
+            android:layout_marginEnd="7dp"
+            android:src="@drawable/ic_voice_msg"
+            app:backgroundTint="@color/card_background"
+            app:tint="@color/text_primary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/adjuntarFAB"
