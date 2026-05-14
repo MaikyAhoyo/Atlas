@@ -7,21 +7,24 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.Volley
 import com.bumptech.glide.Glide
-import com.example.atlas.adaptadores.AdaptadorChat
 import com.example.atlas.Constantes
 import com.example.atlas.R
-import com.example.atlas.modelos.Chat
+import com.example.atlas.adaptadores.AdaptadorChat
 import com.example.atlas.databinding.ActivityChatBinding
+import com.example.atlas.modelos.Chat
+import com.google.auth.oauth2.GoogleCredentials
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
+import org.json.JSONObject
 
 class ChatActivity : AppCompatActivity() {
 
@@ -43,25 +46,29 @@ class ChatActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         firebaseAuth = FirebaseAuth.getInstance()
+        miUid = firebaseAuth.uid ?: ""
+        uid = intent.getStringExtra("uid") ?: ""
+
+        if (uid.isEmpty()) {
+            Toast.makeText(this, "Error: Usuario no encontrado", Toast.LENGTH_SHORT).show()
+            finish()
+            return
+        }
+
+        chatRuta = Constantes.rutaChat(uid, miUid)
 
         progressDialog = ProgressDialog(this)
         progressDialog.setTitle("Espere por favor")
         progressDialog.setCanceledOnTouchOutside(false)
 
-        uid = intent.getStringExtra("uid")!!
-        miUid = firebaseAuth.uid!!
+        obtenerMiNombre()
+        configurarListeners()
+        cargarInfo()
 
-        chatRuta = Constantes.rutaChat(uid, miUid)
+        verificarBloqueoYEscucharMensajes()
+    }
 
-        FirebaseDatabase.getInstance().getReference("Usuarios")
-            .child(miUid)
-            .addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    miNombre = "${snapshot.child("nombres").value}"
-                }
-                override fun onCancelled(error: DatabaseError) {}
-            })
-
+    private fun configurarListeners() {
         binding.adjuntarFAB.setOnClickListener {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 imagenGaleria()
@@ -78,67 +85,183 @@ class ChatActivity : AppCompatActivity() {
             validarMensaje()
         }
 
-        cargarInfo()
-        cargarMensajes()
+        binding.IbBloquear.setOnClickListener {
+            mostrarMenuBloqueo()
+        }
     }
 
-    private fun cargarMensajes() {
-        val mensajesArrayList = ArrayList<Chat>()
-        val ref = FirebaseDatabase.getInstance().getReference("Chats")
-        ref.child(chatRuta)
-            .addValueEventListener(object : ValueEventListener {
+    private fun obtenerMiNombre() {
+        FirebaseDatabase.getInstance().getReference("Usuarios").child(miUid)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    mensajesArrayList.clear()
-                    for (ds: DataSnapshot in snapshot.children) {
-                        try {
-                            val chat = ds.getValue(Chat::class.java)!!
-
-                            if (chat.receptorUid == miUid && !chat.leido) {
-                                ds.ref.child("leido").setValue(true)
-                            }
-
-                            mensajesArrayList.add(chat)
-                        } catch (e: Exception) {
-                            Log.e("FirebaseError", "Error al cargar los mensajes: ${e.message}")
-                        }
-                    }
-
-                    val adaptadorChat = AdaptadorChat(this@ChatActivity, mensajesArrayList)
-                    binding.chatsRV.adapter = adaptadorChat
+                    miNombre = "${snapshot.child("nombres").value}"
                 }
-
-                override fun onCancelled(error: DatabaseError) {
-                    Log.e("FirebaseError", "Error al cargar los mensajes: ${error.message}")
-                }
+                override fun onCancelled(error: DatabaseError) {}
             })
     }
 
+    private fun verificarBloqueoYEscucharMensajes() {
+        // Solo escuchamos si YO he bloqueado al otro
+        val refMiBloqueo = FirebaseDatabase.getInstance().getReference("Bloqueados").child(miUid).child(uid)
+
+        refMiBloqueo.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val yoLoBloquee = snapshot.exists()
+
+                val tiempoBloqueo = if (yoLoBloquee) {
+                    snapshot.child("tiempo").getValue(Long::class.java) ?: 0L
+                } else {
+                    Long.MAX_VALUE
+                }
+
+                aplicarEstadoBloqueoUI(yoLoBloquee)
+                cargarMensajes(tiempoBloqueo)
+            }
+            override fun onCancelled(error: DatabaseError) {}
+        })
+    }
+
+    private fun cargarMensajes(tiempoBloqueo: Long) {
+        val refMensajes = FirebaseDatabase.getInstance().getReference("Chats").child(chatRuta)
+        refMensajes.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val mensajesList = ArrayList<Chat>()
+                for (ds in snapshot.children) {
+                    val chat = ds.getValue(Chat::class.java) ?: continue
+
+                    // Si el mensaje es del otro y se envió después de ser bloqueado, NO se añade a la lista
+                    if (chat.emisorUid == uid && chat.tiempo >= tiempoBloqueo) {
+                        continue
+                    }
+
+                    if (chat.receptorUid == miUid && !chat.leido) {
+                        ds.ref.child("leido").setValue(true)
+                    }
+                    mensajesList.add(chat)
+                }
+
+                binding.chatsRV.adapter = AdaptadorChat(this@ChatActivity, mensajesList)
+                if (mensajesList.isNotEmpty()) {
+                    binding.chatsRV.scrollToPosition(mensajesList.size - 1)
+                }
+            }
+            override fun onCancelled(error: DatabaseError) {}
+        })
+    }
+
+    private fun aplicarEstadoBloqueoUI(bloqueado: Boolean) {
+        if (bloqueado) {
+            binding.tvBloqueado.visibility = View.VISIBLE
+            binding.EtMensajeChat.isEnabled = false
+            binding.adjuntarFAB.isEnabled = false
+            binding.adjuntarFAB.alpha = 0.4f
+            binding.enviarFAB.isEnabled = false
+            binding.enviarFAB.alpha = 0.4f
+        } else {
+            binding.tvBloqueado.visibility = View.GONE
+            binding.EtMensajeChat.isEnabled = true
+            binding.EtMensajeChat.hint = "Escribe un mensaje..."
+            binding.adjuntarFAB.isEnabled = true
+            binding.adjuntarFAB.alpha = 1f
+            binding.enviarFAB.isEnabled = true
+            binding.enviarFAB.alpha = 1f
+        }
+    }
+
+    private fun mostrarMenuBloqueo() {
+        val popup = android.widget.PopupMenu(this, binding.IbBloquear)
+        val ref = FirebaseDatabase.getInstance().getReference("Bloqueados").child(miUid).child(uid)
+
+        ref.get().addOnSuccessListener { snapshot ->
+            val titulo = if (snapshot.exists()) "Desbloquear usuario" else "Bloquear usuario"
+            popup.menu.add(titulo)
+
+            popup.setOnMenuItemClickListener {
+                toggleBloqueo(snapshot.exists())
+                true
+            }
+            popup.show()
+        }
+    }
+
+    private fun toggleBloqueo(actualmenteBloqueado: Boolean) {
+        val ref = FirebaseDatabase.getInstance().getReference("Bloqueados").child(miUid).child(uid)
+
+        if (actualmenteBloqueado) {
+            ref.removeValue().addOnSuccessListener {
+                Toast.makeText(this, "Usuario desbloqueado", Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            val datosBloqueo = mapOf("tiempo" to System.currentTimeMillis())
+            ref.setValue(datosBloqueo).addOnSuccessListener {
+                Toast.makeText(this, "Usuario bloqueado", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
     private fun cargarInfo() {
-        val ref = FirebaseDatabase.getInstance().getReference("Usuarios")
-        ref.child(uid)
+        FirebaseDatabase.getInstance().getReference("Usuarios").child(uid)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val nombres = "${snapshot.child("nombres").value}"
                     val imagen = "${snapshot.child("urlImagenPerfil").value}"
-
                     tokenReceptor = "${snapshot.child("fcmToken").value}"
 
                     binding.TxtNombreUsuario.text = nombres
+                    Glide.with(this@ChatActivity)
+                        .load(imagen)
+                        .placeholder(R.drawable.ic_imagen_perfil)
+                        .into(binding.ToolbarIV)
+                }
+                override fun onCancelled(error: DatabaseError) {}
+            })
+    }
 
-                    try {
-                        Glide.with(applicationContext)
-                            .load(imagen)
-                            .placeholder(R.drawable.ic_imagen_perfil)
-                            .into(binding.ToolbarIV)
-                    } catch (e: Exception) {
-                        Log.e("ChatActivity", "${e.message}")
+    private fun validarMensaje() {
+        val mensaje = binding.EtMensajeChat.text.toString().trim()
+        if (mensaje.isEmpty()) {
+            Toast.makeText(this, "Ingrese un mensaje", Toast.LENGTH_SHORT).show()
+        } else {
+            enviarMensaje(Constantes.MENSAJE_TIPO_TEXTO, mensaje, System.currentTimeMillis())
+        }
+    }
+
+    private fun enviarMensaje(tipoMensaje: String, mensaje: String, tiempo: Long) {
+        val refChat = FirebaseDatabase.getInstance().getReference("Chats").child(chatRuta)
+        val keyId = refChat.push().key ?: return
+
+        // Ver si estamos bloqueados
+        val refBloqueoReceptor = FirebaseDatabase.getInstance().getReference("Bloqueados").child(uid).child(miUid)
+
+        refBloqueoReceptor.get().addOnSuccessListener { snapshot ->
+            val estamosBloqueados = snapshot.exists()
+
+            val hashMap = HashMap<String, Any>()
+            hashMap["idMensaje"] = keyId
+            hashMap["tipoMensaje"] = tipoMensaje
+            hashMap["mensaje"] = mensaje
+            hashMap["emisorUid"] = miUid
+            hashMap["receptorUid"] = uid
+            hashMap["tiempo"] = tiempo
+            hashMap["leido"] = false
+
+            // El mensaje se guarda
+            refChat.child(keyId).setValue(hashMap)
+                .addOnSuccessListener {
+                    if (progressDialog.isShowing) progressDialog.dismiss()
+                    binding.EtMensajeChat.setText("")
+
+                    // SOLO enviamos notificación si NO estamos bloqueados
+                    if (!estamosBloqueados) {
+                        val mensajeNotif = if (tipoMensaje == Constantes.MENSAJE_TIPO_IMAGEN) "Te envió una imagen" else mensaje
+                        prepararNotificacion(mensajeNotif)
                     }
                 }
-
-                override fun onCancelled(error: DatabaseError) {
-                    Log.e("FirebaseError", "Error: ${error.message}")
+                .addOnFailureListener { e ->
+                    if (progressDialog.isShowing) progressDialog.dismiss()
+                    Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
-            })
+        }
     }
 
     private fun imagenGaleria() {
@@ -147,150 +270,83 @@ class ChatActivity : AppCompatActivity() {
         resultadoGaleriaARL.launch(intent)
     }
 
-    private val resultadoGaleriaARL =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { resultado ->
-            if (resultado.resultCode == Activity.RESULT_OK) {
-                val data = resultado.data
-                imagenUri = data!!.data
-                subirImgStorage()
-            } else {
-                Toast.makeText(this, "Cancelado", Toast.LENGTH_SHORT).show()
-            }
+    private val resultadoGaleriaARL = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { res ->
+        if (res.resultCode == Activity.RESULT_OK) {
+            imagenUri = res.data?.data
+            subirImgStorage()
         }
+    }
 
-    private val solicitarPermisoAlmacenamiento =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { esConcecido ->
-            if (esConcecido) {
-                imagenGaleria()
-            } else {
-                Toast.makeText(this, "El permiso de almacenamiento no ha sido concedido", Toast.LENGTH_SHORT).show()
-            }
-        }
+    private val solicitarPermisoAlmacenamiento = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+        if (isGranted) imagenGaleria() else Toast.makeText(this, "Permiso denegado", Toast.LENGTH_SHORT).show()
+    }
 
     private fun subirImgStorage() {
-        progressDialog.setMessage("Subiendo imagen")
+        if (imagenUri == null) return
+        progressDialog.setMessage("Subiendo imagen...")
         progressDialog.show()
 
-        val tiempo = Constantes.obtenerTiempoDis()
-        val nombreRutaImg = "ImagenesChat/$tiempo"
-        val storageRef = FirebaseStorage.getInstance().getReference(nombreRutaImg)
+        val tiempo = System.currentTimeMillis()
+        val storageRef = FirebaseStorage.getInstance().getReference("ImagenesChat/$tiempo")
+
         storageRef.putFile(imagenUri!!)
-            .addOnSuccessListener { taskSnapshot ->
-                val uriTask = taskSnapshot.storage.downloadUrl
-                while (!uriTask.isSuccessful);
-                val urlImagen = uriTask.result.toString()
-                if (uriTask.isSuccessful) {
-                    enviarMensaje(Constantes.MENSAJE_TIPO_IMAGEN, urlImagen, tiempo)
-                }
+            .continueWithTask { task ->
+                if (!task.isSuccessful) task.exception?.let { throw it }
+                storageRef.downloadUrl
             }
-            .addOnFailureListener { e ->
-                Toast.makeText(this, "No se pudo enviar la imagen debido a ${e.message}", Toast.LENGTH_SHORT).show()
-            }
-    }
-
-    private fun validarMensaje() {
-        val mensaje = binding.EtMensajeChat.text.toString().trim()
-        val tiempo = Constantes.obtenerTiempoDis()
-
-        if (mensaje.isEmpty()) {
-            Toast.makeText(this, "Ingrese un mensaje", Toast.LENGTH_SHORT).show()
-        } else {
-            enviarMensaje(Constantes.MENSAJE_TIPO_TEXTO, mensaje, tiempo)
-        }
-    }
-
-    private fun enviarMensaje(tipoMensaje: String, mensaje: String, tiempo: Long) {
-        progressDialog.setMessage("Enviando mensaje")
-        progressDialog.show()
-
-        val refChat = FirebaseDatabase.getInstance().getReference("Chats")
-        val keyId = "${refChat.push().key}"
-        val hashMap = HashMap<String, Any>()
-
-        hashMap["idMensaje"] = "$keyId"
-        hashMap["tipoMensaje"] = "$tipoMensaje"
-        hashMap["mensaje"] = "$mensaje"
-        hashMap["emisorUid"] = "$miUid"
-        hashMap["receptorUid"] = "$uid"
-        hashMap["tiempo"] = tiempo
-        hashMap["leido"] = false
-
-        refChat.child(chatRuta)
-            .child(keyId)
-            .setValue(hashMap)
-            .addOnSuccessListener {
-                progressDialog.dismiss()
-
-                val mensajeNotif = if (tipoMensaje == Constantes.MENSAJE_TIPO_IMAGEN) {
-                    "Te envió una imagen"
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    enviarMensaje(Constantes.MENSAJE_TIPO_IMAGEN, task.result.toString(), tiempo)
                 } else {
-                    mensaje
+                    progressDialog.dismiss()
+                    Toast.makeText(this, "Error al subir", Toast.LENGTH_SHORT).show()
                 }
-
-                prepararNotificacion(mensajeNotif, miNombre)
-
-                binding.EtMensajeChat.setText("")
-            }
-            .addOnFailureListener { e ->
-                progressDialog.dismiss()
-                Toast.makeText(this, "No se pudo enviar el mensaje debido a ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
 
-    private fun prepararNotificacion(mensaje: String, nombreEmisor: String) {
-        Log.d("NotifDebug", "tokenReceptor: $tokenReceptor")
-        if (tokenReceptor.isEmpty() || tokenReceptor == "null") return
+    // NOTIFICACIONES
 
+    private fun prepararNotificacion(mensaje: String) {
+        if (tokenReceptor.isEmpty() || tokenReceptor == "null") return
         Thread {
             try {
                 val accessToken = obtenerAccessToken()
-                enviarNotificacionV1(mensaje, accessToken, nombreEmisor)
+                enviarNotificacionV1(mensaje, accessToken)
             } catch (e: Exception) {
-                Log.e("NotifError", "Error obteniendo token: ${e.message}")
+                Log.e("NotifError", "${e.message}")
             }
         }.start()
     }
 
     private fun obtenerAccessToken(): String {
         val stream = assets.open("service_account.json")
-        val credentials = com.google.auth.oauth2.GoogleCredentials
-            .fromStream(stream)
+        val credentials = GoogleCredentials.fromStream(stream)
             .createScoped(listOf("https://www.googleapis.com/auth/firebase.messaging"))
         credentials.refreshIfExpired()
         return credentials.accessToken.tokenValue
     }
 
-    private fun enviarNotificacionV1(mensaje: String, accessToken: String, nombreEmisor: String) {
+    private fun enviarNotificacionV1(mensaje: String, accessToken: String) {
         val projectId = "atlas-2e732"
-
-        val queue = com.android.volley.toolbox.Volley.newRequestQueue(this)
         val url = "https://fcm.googleapis.com/v1/projects/$projectId/messages:send"
 
-        val jsonMessage = org.json.JSONObject().apply {
-            put("token", tokenReceptor)
-            put("notification", org.json.JSONObject().apply {
-                put("title", nombreEmisor)
-                put("body", mensaje)
+        val jsonBody = JSONObject().apply {
+            put("message", JSONObject().apply {
+                put("token", tokenReceptor)
+                put("notification", JSONObject().apply {
+                    put("title", miNombre)
+                    put("body", mensaje)
+                })
             })
         }
 
-        val jsonBody = org.json.JSONObject().apply {
-            put("message", jsonMessage)
-        }
-
-        val request = object : com.android.volley.toolbox.JsonObjectRequest(
-            Method.POST, url, jsonBody,
-            { Log.d("NotifSuccess", "¡Notificación enviada!") },
-            { error -> Log.e("NotifError", "Fallo: ${error.message}") }
+        val request = object : JsonObjectRequest(Method.POST, url, jsonBody,
+            { Log.d("FCM", "Notificación enviada con éxito") },
+            { Log.e("FCM", "Error enviando notificación") }
         ) {
-            override fun getHeaders(): MutableMap<String, String> {
-                return hashMapOf(
-                    "Authorization" to "Bearer $accessToken",
-                    "Content-Type" to "application/json"
-                )
-            }
+            override fun getHeaders(): MutableMap<String, String> =
+                mutableMapOf("Authorization" to "Bearer $accessToken", "Content-Type" to "application/json")
         }
-
-        queue.add(request)
+        Volley.newRequestQueue(this).add(request)
     }
 }

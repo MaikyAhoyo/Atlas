@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -13,15 +12,18 @@
     app:cardElevation="1dp"
     app:cardCornerRadius="10dp">
 
-    <androidx.appcompat.widget.LinearLayoutCompat
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
+        android:layout_height="wrap_content"
         android:padding="10dp">
 
+        <!-- Foto + badge de mensajes no leídos -->
         <FrameLayout
+            android:id="@+id/frameImagen"
             android:layout_width="50dp"
-            android:layout_height="50dp">
+            android:layout_height="50dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentStart="true">
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/item_imagen"
@@ -29,8 +31,9 @@
                 android:scaleType="centerCrop"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                app:shapeAppearanceOverlay="@style/CircleImage" />
+                app:shapeAppearanceOverlay="@style/CircleImage"/>
 
+            <!-- Badge de mensajes no leídos -->
             <TextView
                 android:id="@+id/item_badge"
                 android:layout_width="20dp"
@@ -41,23 +44,26 @@
                 android:textColor="#FFFFFF"
                 android:textSize="11sp"
                 android:textStyle="bold"
-                android:visibility="gone" />
+                android:visibility="gone"/>
 
         </FrameLayout>
 
-        <androidx.appcompat.widget.LinearLayoutCompat
+        <!-- Nombre y email -->
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@id/frameImagen"
+            android:layout_toStartOf="@id/item_bloqueado"
             android:layout_marginStart="12dp"
-            android:orientation="vertical"
-            android:gravity="center_vertical|start">
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/item_uid"
                 android:text="@string/item_uid"
                 android:visibility="gone"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"/>
 
             <TextView
                 android:id="@+id/item_nombre"
@@ -66,7 +72,7 @@
                 android:textStyle="bold"
                 android:textSize="17sp"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"/>
 
             <TextView
                 android:id="@+id/item_email"
@@ -75,9 +81,20 @@
                 android:textSize="14sp"
                 android:layout_marginTop="2dp"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"/>
 
-        </androidx.appcompat.widget.LinearLayoutCompat>
-    </androidx.appcompat.widget.LinearLayoutCompat>
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/item_bloqueado"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_block"
+            app:tint="@color/gray"
+            android:visibility="gone"/>
+
+    </RelativeLayout>
 
 </com.google.android.material.card.MaterialCardView>
