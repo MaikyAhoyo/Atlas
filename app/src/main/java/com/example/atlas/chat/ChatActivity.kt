@@ -28,13 +28,14 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var binding: ActivityChatBinding
     private var uid = ""
     private var tokenReceptor = ""
+    private var miNombre = ""
 
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var progressDialog: ProgressDialog
     private var miUid = ""
 
     private var chatRuta = ""
-    private var imagenUri : Uri?= null
+    private var imagenUri: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,6 +52,15 @@ class ChatActivity : AppCompatActivity() {
         miUid = firebaseAuth.uid!!
 
         chatRuta = Constantes.rutaChat(uid, miUid)
+
+        FirebaseDatabase.getInstance().getReference("Usuarios")
+            .child(miUid)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    miNombre = "${snapshot.child("nombres").value}"
+                }
+                override fun onCancelled(error: DatabaseError) {}
+            })
 
         binding.adjuntarFAB.setOnClickListener {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -72,7 +82,6 @@ class ChatActivity : AppCompatActivity() {
         cargarMensajes()
     }
 
-
     private fun cargarMensajes() {
         val mensajesArrayList = ArrayList<Chat>()
         val ref = FirebaseDatabase.getInstance().getReference("Chats")
@@ -80,11 +89,16 @@ class ChatActivity : AppCompatActivity() {
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     mensajesArrayList.clear()
-                    for (ds : DataSnapshot in snapshot.children) {
+                    for (ds: DataSnapshot in snapshot.children) {
                         try {
-                            val chat = ds.getValue(Chat::class.java)
-                            mensajesArrayList.add(chat!!)
-                        } catch (e : Exception) {
+                            val chat = ds.getValue(Chat::class.java)!!
+
+                            if (chat.receptorUid == miUid && !chat.leido) {
+                                ds.ref.child("leido").setValue(true)
+                            }
+
+                            mensajesArrayList.add(chat)
+                        } catch (e: Exception) {
                             Log.e("FirebaseError", "Error al cargar los mensajes: ${e.message}")
                         }
                     }
@@ -140,11 +154,7 @@ class ChatActivity : AppCompatActivity() {
                 imagenUri = data!!.data
                 subirImgStorage()
             } else {
-                Toast.makeText(
-                    this,
-                    "Cancelado",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(this, "Cancelado", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -153,11 +163,7 @@ class ChatActivity : AppCompatActivity() {
             if (esConcecido) {
                 imagenGaleria()
             } else {
-                Toast.makeText(
-                    this,
-                    "El permiso de almacenamiento no ha sido concedido",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(this, "El permiso de almacenamiento no ha sido concedido", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -172,15 +178,13 @@ class ChatActivity : AppCompatActivity() {
             .addOnSuccessListener { taskSnapshot ->
                 val uriTask = taskSnapshot.storage.downloadUrl
                 while (!uriTask.isSuccessful);
-                var urlImagen = uriTask.result.toString()
+                val urlImagen = uriTask.result.toString()
                 if (uriTask.isSuccessful) {
                     enviarMensaje(Constantes.MENSAJE_TIPO_IMAGEN, urlImagen, tiempo)
                 }
             }
             .addOnFailureListener { e ->
-                Toast.makeText(this,
-                    "No se pudo enviar la imagen debido a ${e.message}",
-                    Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "No se pudo enviar la imagen debido a ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
 
@@ -209,6 +213,7 @@ class ChatActivity : AppCompatActivity() {
         hashMap["emisorUid"] = "$miUid"
         hashMap["receptorUid"] = "$uid"
         hashMap["tiempo"] = tiempo
+        hashMap["leido"] = false
 
         refChat.child(chatRuta)
             .child(keyId)
@@ -222,28 +227,24 @@ class ChatActivity : AppCompatActivity() {
                     mensaje
                 }
 
-                prepararNotificacion(mensajeNotif)
+                prepararNotificacion(mensajeNotif, miNombre)
 
                 binding.EtMensajeChat.setText("")
             }
             .addOnFailureListener { e ->
                 progressDialog.dismiss()
-                Toast.makeText(
-                    this,
-                    "No se pudo enviar el mensaje debido a ${e.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(this, "No se pudo enviar el mensaje debido a ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
 
-    private fun prepararNotificacion(mensaje: String) {
-        Log.d("NotifDebug", "tokenReceptor: $tokenReceptor") // ✅ Agrega esto
+    private fun prepararNotificacion(mensaje: String, nombreEmisor: String) {
+        Log.d("NotifDebug", "tokenReceptor: $tokenReceptor")
         if (tokenReceptor.isEmpty() || tokenReceptor == "null") return
 
         Thread {
             try {
                 val accessToken = obtenerAccessToken()
-                enviarNotificacionV1(mensaje, accessToken)
+                enviarNotificacionV1(mensaje, accessToken, nombreEmisor)
             } catch (e: Exception) {
                 Log.e("NotifError", "Error obteniendo token: ${e.message}")
             }
@@ -259,7 +260,7 @@ class ChatActivity : AppCompatActivity() {
         return credentials.accessToken.tokenValue
     }
 
-    private fun enviarNotificacionV1(mensaje: String, accessToken: String) {
+    private fun enviarNotificacionV1(mensaje: String, accessToken: String, nombreEmisor: String) {
         val projectId = "atlas-2e732"
 
         val queue = com.android.volley.toolbox.Volley.newRequestQueue(this)
@@ -268,7 +269,7 @@ class ChatActivity : AppCompatActivity() {
         val jsonMessage = org.json.JSONObject().apply {
             put("token", tokenReceptor)
             put("notification", org.json.JSONObject().apply {
-                put("title", "Atlas Chat")
+                put("title", nombreEmisor)
                 put("body", mensaje)
             })
         }

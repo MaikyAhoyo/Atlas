@@ -19,20 +19,38 @@
         android:orientation="horizontal"
         android:padding="10dp">
 
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/item_imagen"
-            android:src="@drawable/ic_imagen_perfil"
-            android:scaleType="centerCrop"
+        <FrameLayout
             android:layout_width="50dp"
-            android:layout_height="50dp"
-            app:shapeAppearanceOverlay="@style/CircleImage" />
+            android:layout_height="50dp">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/item_imagen"
+                android:src="@drawable/ic_imagen_perfil"
+                android:scaleType="centerCrop"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                app:shapeAppearanceOverlay="@style/CircleImage" />
+
+            <TextView
+                android:id="@+id/item_badge"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="top|end"
+                android:background="@drawable/badge_rojo"
+                android:gravity="center"
+                android:textColor="#FFFFFF"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+        </FrameLayout>
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginStart="12dp"
             android:orientation="vertical"
-            android:gravity="center_vertical|start" >
+            android:gravity="center_vertical|start">
 
             <TextView
                 android:id="@+id/item_uid"

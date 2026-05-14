@@ -10,6 +10,8 @@ class Chat {
     var receptorUid : String = ""
     var tiempo : Long = 0
 
+    var leido: Boolean = false
+
     // Constructor vacio
     constructor()
 
