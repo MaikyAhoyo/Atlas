@@ -10,6 +10,7 @@
     android:fitsSystemWindows="true"
     tools:context=".chat.ChatActivity">
 
+    <!-- TOOLBAR -->
     <RelativeLayout
         android:id="@+id/ToolbarRLChat"
         android:layout_width="match_parent"
@@ -27,22 +28,37 @@
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/ToolbarIV"
-            android:layout_marginEnd="7dp"
+            android:layout_marginStart="5dp"
             android:layout_centerVertical="true"
-            android:layout_toStartOf="@id/Txt_nombre_usuario"
+            android:layout_toEndOf="@id/IbRegresar"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_imagen_perfil"
             android:layout_width="40dp"
-            android:layout_height="40dp"/>
+            android:layout_height="40dp"
+            app:shapeAppearanceOverlay="@style/CircleImage"/>
 
         <TextView
-            android:id="@+id/Txt_nombre_usuario"
+            android:id="@+id/TxtNombreUsuario"
             android:text="@string/Txt_nombre_usuario"
             android:textColor="@color/text_primary"
-            android:layout_centerInParent="true"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@id/ToolbarIV"
+            android:layout_marginStart="10dp"
             android:textStyle="bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
+
+        <ImageButton
+            android:id="@+id/IbBloquear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="10dp"
+            android:background="@android:color/transparent"
+            android:padding="10dp"
+            android:src="@drawable/ic_more_vert"
+            app:tint="@color/text_primary" />
 
         <View
             android:background="@color/gray"
@@ -51,16 +67,39 @@
             android:layout_height="1dp"/>
     </RelativeLayout>
 
+    <!-- LISTA DE MENSAJES -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/chatsRV"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:layout_below="@id/ToolbarRLChat"
-        android:layout_above="@id/View2"
+        android:layout_above="@id/tvBloqueado"
         android:padding="5dp"
         tools:listitem="@layout/item_chat_izquierdo"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
+    <!-- BANNER DE BLOQUEO -->
+    <TextView
+        android:id="@+id/tvBloqueado"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/View2"
+        android:background="#FFEBEE"
+        android:padding="12dp"
+        android:text="Has bloqueado a este usuario. No puedes enviar ni recibir mensajes"
+        android:textAlignment="center"
+        android:textSize="13sp"
+        android:textColor="#C62828"
+        android:visibility="gone" />
+
+    <View
+        android:id="@+id/View2"
+        android:background="@color/gray"
+        android:layout_above="@id/RLMensaje"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"/>
+
+    <!-- CONTENEDOR DE MENSAJE -->
     <RelativeLayout
         android:id="@+id/RLMensaje"
         android:layout_alignParentBottom="true"
@@ -69,7 +108,7 @@
         android:layout_height="wrap_content">
 
         <EditText
-            android:id="@+id/Et_mensaje_chat"
+            android:id="@+id/EtMensajeChat"
             android:hint="@string/Et_mensaje_chat"
             android:textColor="@color/text_primary"
             android:textColorHint="@color/gray"
@@ -78,7 +117,8 @@
             android:layout_centerVertical="true"
             android:layout_toStartOf="@+id/adjuntarFAB"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"/>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/adjuntarFAB"
@@ -104,14 +144,6 @@
             android:elevation="0dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
-
     </RelativeLayout>
-
-    <View
-        android:id="@+id/View2"
-        android:background="@color/gray"
-        android:layout_above="@id/RLMensaje"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"/>
 
 </RelativeLayout>

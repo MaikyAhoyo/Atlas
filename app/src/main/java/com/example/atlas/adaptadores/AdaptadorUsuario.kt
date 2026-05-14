@@ -58,7 +58,6 @@ class AdaptadorUsuario(
                         val receptorUid = ds.child("receptorUid").getValue(String::class.java) ?: ""
                         !leido && receptorUid == miUid
                     }
-                    Log.d("BadgeDebug", "Usuario: ${usuario.nombres} - No leídos: $noLeidos")
                     if (noLeidos > 0) {
                         holder.badge.visibility = View.VISIBLE
                         holder.badge.text = if (noLeidos > 9) "9+" else "$noLeidos"
@@ -66,16 +65,24 @@ class AdaptadorUsuario(
                         holder.badge.visibility = View.GONE
                     }
                 }
+                override fun onCancelled(error: DatabaseError) {}
+            })
 
+        // Verificar si el usuario está bloqueado
+        FirebaseDatabase.getInstance()
+            .getReference("Bloqueados")
+            .child(miUid)
+            .child(usuario.uid)
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    holder.bloqueado.visibility = if (snapshot.exists()) View.VISIBLE else View.GONE
+                }
                 override fun onCancelled(error: DatabaseError) {}
             })
 
         holder.itemView.setOnClickListener {
             val intent = Intent(context, ChatActivity::class.java)
             intent.putExtra("uid", holder.uid.text)
-            Toast.makeText(context,
-                "Has seleccionado al usuario: ${holder.nombres.text}",
-                Toast.LENGTH_SHORT).show()
             context.startActivity(intent)
         }
     }
@@ -86,5 +93,6 @@ class AdaptadorUsuario(
         val nombres: TextView = itemView.findViewById(R.id.item_nombre)
         val imagen: ImageView = itemView.findViewById(R.id.item_imagen)
         val badge: TextView = itemView.findViewById(R.id.item_badge)
+        val bloqueado: ImageView = itemView.findViewById(R.id.item_bloqueado)
     }
 }
