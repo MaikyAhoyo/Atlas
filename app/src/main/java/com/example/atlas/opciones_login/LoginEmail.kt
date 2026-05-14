@@ -10,6 +10,8 @@ import com.example.atlas.MainActivity
 import com.example.atlas.RegistroEmail
 import com.example.atlas.databinding.ActivityLoginEmailBinding
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.messaging.FirebaseMessaging
 
 
 class LoginEmail : AppCompatActivity() {
@@ -70,6 +72,16 @@ class LoginEmail : AppCompatActivity() {
 
         firebaseAuth.signInWithEmailAndPassword(email, password)
             .addOnSuccessListener {
+
+                val miUid = firebaseAuth.uid
+                FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val token = task.result
+                        val ref = FirebaseDatabase.getInstance().getReference("Usuarios")
+                        ref.child(miUid!!).child("fcmToken").setValue(token)
+                    }
+                }
+
                 progressDialog.dismiss()
                 startActivity(Intent(this, MainActivity::class.java))
                 finishAffinity()

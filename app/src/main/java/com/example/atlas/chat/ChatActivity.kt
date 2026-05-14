@@ -27,6 +27,7 @@ class ChatActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityChatBinding
     private var uid = ""
+    private var tokenReceptor = ""
 
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var progressDialog: ProgressDialog
@@ -105,6 +106,8 @@ class ChatActivity : AppCompatActivity() {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val nombres = "${snapshot.child("nombres").value}"
                     val imagen = "${snapshot.child("urlImagenPerfil").value}"
+
+                    tokenReceptor = "${snapshot.child("fcmToken").value}"
 
                     binding.TxtNombreUsuario.text = nombres
 
@@ -212,6 +215,15 @@ class ChatActivity : AppCompatActivity() {
             .setValue(hashMap)
             .addOnSuccessListener {
                 progressDialog.dismiss()
+
+                val mensajeNotif = if (tipoMensaje == Constantes.MENSAJE_TIPO_IMAGEN) {
+                    "Te envió una imagen"
+                } else {
+                    mensaje
+                }
+
+                prepararNotificacion(mensajeNotif)
+
                 binding.EtMensajeChat.setText("")
             }
             .addOnFailureListener { e ->
@@ -222,5 +234,62 @@ class ChatActivity : AppCompatActivity() {
                     Toast.LENGTH_SHORT
                 ).show()
             }
+    }
+
+    private fun prepararNotificacion(mensaje: String) {
+        Log.d("NotifDebug", "tokenReceptor: $tokenReceptor") // ✅ Agrega esto
+        if (tokenReceptor.isEmpty() || tokenReceptor == "null") return
+
+        Thread {
+            try {
+                val accessToken = obtenerAccessToken()
+                enviarNotificacionV1(mensaje, accessToken)
+            } catch (e: Exception) {
+                Log.e("NotifError", "Error obteniendo token: ${e.message}")
+            }
+        }.start()
+    }
+
+    private fun obtenerAccessToken(): String {
+        val stream = assets.open("service_account.json")
+        val credentials = com.google.auth.oauth2.GoogleCredentials
+            .fromStream(stream)
+            .createScoped(listOf("https://www.googleapis.com/auth/firebase.messaging"))
+        credentials.refreshIfExpired()
+        return credentials.accessToken.tokenValue
+    }
+
+    private fun enviarNotificacionV1(mensaje: String, accessToken: String) {
+        val projectId = "atlas-2e732"
+
+        val queue = com.android.volley.toolbox.Volley.newRequestQueue(this)
+        val url = "https://fcm.googleapis.com/v1/projects/$projectId/messages:send"
+
+        val jsonMessage = org.json.JSONObject().apply {
+            put("token", tokenReceptor)
+            put("notification", org.json.JSONObject().apply {
+                put("title", "Atlas Chat")
+                put("body", mensaje)
+            })
+        }
+
+        val jsonBody = org.json.JSONObject().apply {
+            put("message", jsonMessage)
+        }
+
+        val request = object : com.android.volley.toolbox.JsonObjectRequest(
+            Method.POST, url, jsonBody,
+            { Log.d("NotifSuccess", "¡Notificación enviada!") },
+            { error -> Log.e("NotifError", "Fallo: ${error.message}") }
+        ) {
+            override fun getHeaders(): MutableMap<String, String> {
+                return hashMapOf(
+                    "Authorization" to "Bearer $accessToken",
+                    "Content-Type" to "application/json"
+                )
+            }
+        }
+
+        queue.add(request)
     }
 }

@@ -22,6 +22,7 @@ android {
         resources {
             excludes += "/META-INF/NOTICE.md"
             excludes += "/META-INF/LICENSE.md"
+            excludes += "META-INF/DEPENDENCIES"
         }
     }
 
@@ -64,4 +65,7 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     implementation("com.sun.mail:android-mail:1.6.7")
     implementation("com.sun.mail:android-activation:1.6.7")
+    implementation("com.google.firebase:firebase-messaging-ktx:23.4.1")
+    implementation("com.android.volley:volley:1.2.1")
+    implementation("com.google.auth:google-auth-library-oauth2-http:1.19.0")
 }

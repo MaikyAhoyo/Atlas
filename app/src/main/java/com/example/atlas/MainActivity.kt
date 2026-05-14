@@ -1,6 +1,7 @@
 package com.example.atlas
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.atlas.fragmentos.FragmentInicio
@@ -9,6 +10,8 @@ import com.example.atlas.fragmentos.FragmentChats
 import com.example.atlas.fragmentos.FragmentRutinas
 import com.example.atlas.databinding.ActivityMainBinding
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.messaging.FirebaseMessaging
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -22,6 +25,8 @@ class MainActivity : AppCompatActivity() {
 
         firebaseAuth = FirebaseAuth.getInstance()
         comprobarSesion()
+
+        actualizarToken()
 
         verFragmentInicio()
 
@@ -44,6 +49,16 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 else -> false
+            }
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
+                != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(
+                    arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
+                    101
+                )
             }
         }
 
@@ -86,5 +101,18 @@ class MainActivity : AppCompatActivity() {
         val fragmentTransition = supportFragmentManager.beginTransaction()
         fragmentTransition.replace(binding.FragmentL1.id, fragment, "FragmentPerfil")
         fragmentTransition.commit()
+    }
+
+    private fun actualizarToken() {
+        val miUid = firebaseAuth.uid
+        if (miUid != null) {
+            FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val token = task.result
+                    val ref = FirebaseDatabase.getInstance().getReference("Usuarios")
+                    ref.child(miUid).child("fcmToken").setValue(token)
+                }
+            }
+        }
     }
 }
