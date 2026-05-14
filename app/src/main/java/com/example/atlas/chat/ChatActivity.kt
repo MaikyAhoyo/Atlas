@@ -257,6 +257,7 @@ class ChatActivity : AppCompatActivity() {
             .fromStream(stream)
             .createScoped(listOf("https://www.googleapis.com/auth/firebase.messaging"))
         credentials.refreshIfExpired()
+
         return credentials.accessToken.tokenValue
     }
 
